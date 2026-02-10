@@ -22,6 +22,7 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "@types/dompurify": "^3.0.5",
     "@types/jsdom": "^27.0.0",
     "@types/node": "^20.11.16",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
@@ -36,5 +37,9 @@
     "vite-plugin-electron": "^0.28.2",
     "vite-plugin-electron-renderer": "^0.14.5",
     "vitest": "^1.2.2"
+  },
+  "dependencies": {
+    "dompurify": "^3.3.1",
+    "marked": "^17.0.1"
   }
 }

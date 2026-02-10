@@ -6,7 +6,7 @@
       "ES2022",
       "DOM"
     ],
-    "moduleResolution": "bundler",
+    "moduleResolution": "node",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,

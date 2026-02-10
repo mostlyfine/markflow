@@ -276,4 +276,26 @@ describe('Scroll reset behavior', () => {
 
     restoreGlobals();
   });
+
+  it('locks document scrolling while the app is mounted and restores on unmount', async () => {
+    const { window, root, flushAll, resolveWelcome, restoreGlobals } = await renderApp();
+
+    await act(async () => {
+      resolveWelcome();
+    });
+
+    await flushAll();
+
+    expect(window.document.documentElement.style.overflow).toBe('hidden');
+    expect(window.document.body.style.overflow).toBe('hidden');
+
+    await act(async () => {
+      root.unmount();
+    });
+
+    expect(window.document.documentElement.style.overflow).toBe('');
+    expect(window.document.body.style.overflow).toBe('');
+
+    restoreGlobals();
+  });
 });

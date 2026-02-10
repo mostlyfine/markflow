@@ -4,6 +4,7 @@ import { dirname, join } from 'path';
 import { readFile } from 'fs/promises';
 import { resolve as resolvePath } from 'path';
 import { ConfigStore, setupConfigHandlers } from './config.js';
+import { buildMenuTemplate } from './menu.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -177,76 +178,12 @@ ipcMain.handle('select-file', async () => {
  * アプリケーションメニューを設定
  */
 function setupMenu(): void {
-  const template: Electron.MenuItemConstructorOptions[] = [
-    {
-      label: 'ファイル',
-      submenu: [
-        {
-          label: 'ファイルを開く...',
-          accelerator: 'CmdOrCtrl+O',
-          click: async () => {
-            if (mainWindow) {
-              mainWindow.webContents.send('trigger-file-open');
-            }
-          },
-        },
-        {
-          label: 'ファイルを再読み込み',
-          accelerator: 'CmdOrCtrl+R',
-          click: async () => {
-            if (mainWindow) {
-              mainWindow.webContents.send('trigger-file-reload');
-            }
-          },
-        },
-        { type: 'separator' },
-        {
-          label: '終了',
-          accelerator: 'CmdOrCtrl+Q',
-          click: () => {
-            app.quit();
-          },
-        },
-      ],
-    },
-    {
-      label: '表示',
-      submenu: [
-        {
-          label: '設定...',
-          accelerator: 'CmdOrCtrl+,',
-          click: () => {
-            if (mainWindow) {
-              mainWindow.webContents.send('toggle-settings');
-            }
-          },
-        },
-        { type: 'separator' },
-        { role: 'forceReload', label: 'ページを再読み込み' },
-        { role: 'toggleDevTools', label: '開発者ツール' },
-        { type: 'separator' },
-        { role: 'resetZoom', label: '実際のサイズ' },
-        { role: 'zoomIn', label: '拡大' },
-        { role: 'zoomOut', label: '縮小' },
-        { type: 'separator' },
-        { role: 'togglefullscreen', label: 'フルスクリーン' },
-      ],
-    },
-    {
-      label: '編集',
-      submenu: [
-        { role: 'undo', label: '元に戻す' },
-        { role: 'redo', label: 'やり直す' },
-        { type: 'separator' },
-        { role: 'cut', label: '切り取り' },
-        { role: 'copy', label: 'コピー' },
-        { role: 'paste', label: '貼り付け' },
-        { role: 'selectAll', label: 'すべて選択' },
-      ],
-    },
-  ];
-
-  const menu = Menu.buildFromTemplate(template);
+  const menu = Menu.buildFromTemplate(
+    buildMenuTemplate(
+      () => (mainWindow && !mainWindow.isDestroyed() ? mainWindow : null),
+      () => app.quit(),
+    ),
+  );
   Menu.setApplicationMenu(menu);
 }
 

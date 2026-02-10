@@ -14,6 +14,7 @@ const App: React.FC = () => {
   const [customCSS, setCustomCSS] = useState<string>('');
   const [showSettings, setShowSettings] = useState<boolean>(false);
   const [hasFileLoaded, setHasFileLoaded] = useState<boolean>(false);
+  const [currentFilePath, setCurrentFilePath] = useState<string | null>(null);
 
   // 初期化: デフォルトファイル読み込み
   useEffect(() => {
@@ -25,6 +26,7 @@ const App: React.FC = () => {
         if (response.ok) {
           const content = await response.text();
           setMarkdown(content);
+          console.log('📄 Loaded default file (gfm.md)');
         }
       } catch (error) {
         console.error('Failed to load gfm.md:', error);
@@ -50,6 +52,16 @@ const App: React.FC = () => {
     loadCustomCSS();
   }, []);
 
+  // 現在のファイルパスの変更を監視
+  useEffect(() => {
+    if (currentFilePath) {
+      console.log('📌 Current file:', currentFilePath);
+      document.title = `Markdown Viewer - ${currentFilePath.split('/').pop()}`;
+    } else {
+      document.title = 'Markdown Viewer';
+    }
+  }, [currentFilePath]);
+
   // ElectronAPIイベントリスナー
   useEffect(() => {
     // メニューからのファイルを開く
@@ -59,10 +71,29 @@ const App: React.FC = () => {
           const result = await window.electronAPI.selectFile();
           if (result) {
             setMarkdown(result.content);
+            setCurrentFilePath(result.filePath);
             setHasFileLoaded(true);
+            console.log('📂 File opened:', result.filePath);
           }
         } catch (error) {
           console.error('File loading error:', error);
+        }
+      });
+    }
+
+    // メニューからのファイル再読み込み
+    if (window.electronAPI?.onFileReload) {
+      window.electronAPI.onFileReload(async () => {
+        try {
+          const result = await window.electronAPI.reloadFile();
+          if (result) {
+            setMarkdown(result.content);
+            console.log('🔄 File reloaded:', result.filePath);
+          } else {
+            console.log('No file to reload');
+          }
+        } catch (error) {
+          console.error('File reload error:', error);
         }
       });
     }
@@ -79,6 +110,7 @@ const App: React.FC = () => {
       window.electronAPI.onFileOpenFromCLI((data) => {
         console.log('📋 Loading file from CLI:', data.filePath);
         setMarkdown(data.content);
+        setCurrentFilePath(data.filePath);
         setHasFileLoaded(true);
       });
     }
@@ -87,6 +119,7 @@ const App: React.FC = () => {
   // ファイルロード
   const handleFileLoad = (content: string) => {
     setMarkdown(content);
+    setCurrentFilePath(null);
     setHasFileLoaded(true);
   };
 

@@ -20,9 +20,15 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // ファイル読み込みAPI
   selectFile: (): Promise<{ filePath: string; content: string } | null> =>
     ipcRenderer.invoke('select-file'),
+  reloadFile: (): Promise<{ filePath: string; content: string } | null> =>
+    ipcRenderer.invoke('reload-file'),
   // メニューからのファイルを開くイベント
   onFileOpen: (callback: () => void) => {
     ipcRenderer.on('trigger-file-open', callback);
+  },
+  // メニューからのファイル再読み込みイベント
+  onFileReload: (callback: () => void) => {
+    ipcRenderer.on('trigger-file-reload', callback);
   },
   // メニューからの設定画面トグルイベント
   onToggleSettings: (callback: () => void) => {
@@ -50,7 +56,9 @@ export interface ElectronAPI {
   getCustomCSS: () => Promise<string>;
   setCustomCSS: (css: string) => Promise<boolean>;
   selectFile: () => Promise<{ filePath: string; content: string } | null>;
+  reloadFile: () => Promise<{ filePath: string; content: string } | null>;
   onFileOpen: (callback: () => void) => void;
+  onFileReload: (callback: () => void) => void;
   onToggleSettings: (callback: () => void) => void;
   onFileOpenFromCLI: (
     callback: (data: { filePath: string; content: string }) => void,

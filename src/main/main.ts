@@ -11,6 +11,7 @@ const __dirname = dirname(__filename);
 let mainWindow: BrowserWindow | null = null;
 const configStore = new ConfigStore();
 let initialFilePath: string | null = null;
+let currentFilePath: string | null = null;
 
 /**
  * メインウィンドウを作成
@@ -96,6 +97,32 @@ ipcMain.handle('open-external', async (_event, url: string) => {
   }
 });
 
+// ファイルを再読み込み
+ipcMain.handle('reload-file', async () => {
+  console.log('reload-file IPC handler called');
+  if (!currentFilePath) {
+    console.log('No file to reload');
+    return null;
+  }
+
+  try {
+    // ファイルサイズチェック (10MB制限)
+    const fs = await import('fs');
+    const stats = fs.statSync(currentFilePath);
+    const MAX_FILE_SIZE = 10 * 1024 * 1024;
+
+    if (stats.size > MAX_FILE_SIZE) {
+      throw new Error('ファイルサイズが大きすぎます（最大10MB）');
+    }
+
+    const content = await readFile(currentFilePath, 'utf-8');
+    return { filePath: currentFilePath, content };
+  } catch (error) {
+    console.error('File reload error:', error);
+    throw error;
+  }
+});
+
 // ファイル選択ダイアログ
 ipcMain.handle('select-file', async () => {
   console.log('select-file IPC handler called');
@@ -133,6 +160,7 @@ ipcMain.handle('select-file', async () => {
     }
 
     const content = await readFile(filePath, 'utf-8');
+    currentFilePath = filePath;
     return { filePath, content };
   } catch (error) {
     console.error('File read error:', error);
@@ -154,6 +182,15 @@ function setupMenu(): void {
           click: async () => {
             if (mainWindow) {
               mainWindow.webContents.send('trigger-file-open');
+            }
+          },
+        },
+        {
+          label: 'ファイルを再読み込み',
+          accelerator: 'CmdOrCtrl+R',
+          click: async () => {
+            if (mainWindow) {
+              mainWindow.webContents.send('trigger-file-reload');
             }
           },
         },
@@ -180,7 +217,7 @@ function setupMenu(): void {
           },
         },
         { type: 'separator' },
-        { role: 'reload', label: '再読み込み' },
+        { role: 'forceReload', label: 'ページを再読み込み' },
         { role: 'toggleDevTools', label: '開発者ツール' },
         { type: 'separator' },
         { role: 'resetZoom', label: '実際のサイズ' },
@@ -188,18 +225,6 @@ function setupMenu(): void {
         { role: 'zoomOut', label: '縮小' },
         { type: 'separator' },
         { role: 'togglefullscreen', label: 'フルスクリーン' },
-      ],
-    },
-    {
-      label: '編集',
-      submenu: [
-        { role: 'undo', label: '元に戻す' },
-        { role: 'redo', label: 'やり直す' },
-        { type: 'separator' },
-        { role: 'cut', label: '切り取り' },
-        { role: 'copy', label: 'コピー' },
-        { role: 'paste', label: '貼り付け' },
-        { role: 'selectAll', label: 'すべて選択' },
       ],
     },
     {
@@ -232,6 +257,7 @@ async function loadFileFromCLI(
     console.log('📄 Loading file from CLI:', absolutePath);
 
     const content = await readFile(absolutePath, 'utf-8');
+    currentFilePath = absolutePath;
 
     // レンダラープロセスにファイル内容を送信
     window.webContents.send('load-file-from-cli', {

@@ -12,7 +12,7 @@ describe('Error Handling', () => {
       <!DOCTYPE html>
       <html>
         <body>
-          <div id="markdown-viewer"></div>
+          <div id="markflow-viewer"></div>
         </body>
       </html>
     `);
@@ -28,7 +28,7 @@ describe('Error Handling', () => {
   describe('MarkdownViewer エラー表示', () => {
     it('should display error message when rendering fails', () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const viewer = new (MarkdownViewer as any)('markdown-viewer');
+      const viewer = new (MarkdownViewer as any)('markflow-viewer');
 
       // 不正なMarkdownや内部エラーをシミュレート
       viewer.showError('レンダリングに失敗しました');
@@ -40,7 +40,7 @@ describe('Error Handling', () => {
 
     it('should clear error message when rendering succeeds', () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const viewer = new (MarkdownViewer as any)('markdown-viewer');
+      const viewer = new (MarkdownViewer as any)('markflow-viewer');
 
       viewer.showError('エラーメッセージ');
       expect(document.querySelector('.error-message')).toBeTruthy();
@@ -51,7 +51,7 @@ describe('Error Handling', () => {
 
     it('should display styled error container', () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const viewer = new (MarkdownViewer as any)('markdown-viewer');
+      const viewer = new (MarkdownViewer as any)('markflow-viewer');
       viewer.showError('テストエラー');
 
       const errorElement = document.querySelector('.error-message');
@@ -60,7 +60,7 @@ describe('Error Handling', () => {
 
     it('should support multiple error messages', () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const viewer = new (MarkdownViewer as any)('markdown-viewer');
+      const viewer = new (MarkdownViewer as any)('markflow-viewer');
 
       viewer.showError('最初のエラー');
       viewer.showError('2番目のエラー');
@@ -100,7 +100,7 @@ describe('Error Handling', () => {
 
     it('should handle empty file content', () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const viewer = new (MarkdownViewer as any)('markdown-viewer');
+      const viewer = new (MarkdownViewer as any)('markflow-viewer');
 
       viewer.render('');
 
@@ -130,7 +130,7 @@ describe('Error Handling', () => {
   describe('エラー回復', () => {
     it('should allow retry after error', () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const viewer = new (MarkdownViewer as any)('markdown-viewer');
+      const viewer = new (MarkdownViewer as any)('markflow-viewer');
 
       viewer.showError('エラー');
       expect(document.querySelector('.error-message')).toBeTruthy();

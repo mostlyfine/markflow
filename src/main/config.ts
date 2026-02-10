@@ -34,7 +34,7 @@ export class ConfigStore {
 
   constructor() {
     this.store = new Store<ConfigSchema>({
-      name: 'markdown-viewer-config',
+      name: 'markflow-config',
       defaults: {
         customCSS: '',
         windowState: {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import MarkdownViewer from './components/MarkdownViewer';
 import Settings from './components/Settings';
 import { ElectronAPI } from '../preload/preload';
@@ -15,26 +15,49 @@ const App: React.FC = () => {
   const [showSettings, setShowSettings] = useState<boolean>(false);
   const [hasFileLoaded, setHasFileLoaded] = useState<boolean>(false);
   const [currentFilePath, setCurrentFilePath] = useState<string | null>(null);
+  const [scrollToken, setScrollToken] = useState<number>(0);
+  const hasFileLoadedRef = useRef<boolean>(false);
+  const appContainerRef = useRef<HTMLDivElement | null>(null);
+
+  const resetScrollPosition = useCallback(() => {
+    const container = appContainerRef.current;
+    if (container) {
+      container.scrollTo({ top: 0, behavior: 'auto' });
+    }
+  }, []);
+
+  const applyLoadedContent = useCallback(
+    (content: string, filePath: string | null = null) => {
+      setMarkdown(content);
+      setCurrentFilePath(filePath);
+      setHasFileLoaded(true);
+      hasFileLoadedRef.current = true;
+      setScrollToken((prev) => prev + 1);
+    },
+    [],
+  );
 
   // 初期化: デフォルトファイル読み込み
   useEffect(() => {
     const loadDefaultFile = async () => {
-      if (hasFileLoaded) return;
+      if (hasFileLoadedRef.current) return;
 
       try {
-        const response = await fetch('./gfm.md');
+        const response = await fetch('./welcome.md');
         if (response.ok) {
           const content = await response.text();
-          setMarkdown(content);
-          console.log('📄 Loaded default file (gfm.md)');
+          if (!hasFileLoadedRef.current) {
+            applyLoadedContent(content, null);
+            console.log('📄 Loaded default file (welcome.md)');
+          }
         }
       } catch (error) {
-        console.error('Failed to load gfm.md:', error);
+        console.error('Failed to load welcome.md:', error);
       }
     };
 
     loadDefaultFile();
-  }, [hasFileLoaded]);
+  }, [applyLoadedContent]);
 
   // カスタムCSS読み込み
   useEffect(() => {
@@ -56,11 +79,24 @@ const App: React.FC = () => {
   useEffect(() => {
     if (currentFilePath) {
       console.log('📌 Current file:', currentFilePath);
-      document.title = `Markdown Viewer - ${currentFilePath.split('/').pop()}`;
+      document.title = `MarkFlow - ${currentFilePath.split('/').pop()}`;
     } else {
-      document.title = 'Markdown Viewer';
+      document.title = 'MarkFlow';
     }
   }, [currentFilePath]);
+
+  // markdownの変更を監視してスクロール位置をリセット
+  useEffect(() => {
+    if (!hasFileLoaded) return;
+
+    const timer = window.setTimeout(() => {
+      resetScrollPosition();
+    }, 0);
+
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [hasFileLoaded, scrollToken, resetScrollPosition]);
 
   // ElectronAPIイベントリスナー
   useEffect(() => {
@@ -70,9 +106,7 @@ const App: React.FC = () => {
         try {
           const result = await window.electronAPI.selectFile();
           if (result) {
-            setMarkdown(result.content);
-            setCurrentFilePath(result.filePath);
-            setHasFileLoaded(true);
+            applyLoadedContent(result.content, result.filePath);
             console.log('📂 File opened:', result.filePath);
           }
         } catch (error) {
@@ -87,7 +121,7 @@ const App: React.FC = () => {
         try {
           const result = await window.electronAPI.reloadFile();
           if (result) {
-            setMarkdown(result.content);
+            applyLoadedContent(result.content, result.filePath);
             console.log('🔄 File reloaded:', result.filePath);
           } else {
             console.log('No file to reload');
@@ -109,18 +143,14 @@ const App: React.FC = () => {
     if (window.electronAPI?.onFileOpenFromCLI) {
       window.electronAPI.onFileOpenFromCLI((data) => {
         console.log('📋 Loading file from CLI:', data.filePath);
-        setMarkdown(data.content);
-        setCurrentFilePath(data.filePath);
-        setHasFileLoaded(true);
+        applyLoadedContent(data.content, data.filePath);
       });
     }
-  }, []);
+  }, [applyLoadedContent]);
 
   // ファイルロード
   const handleFileLoad = (content: string) => {
-    setMarkdown(content);
-    setCurrentFilePath(null);
-    setHasFileLoaded(true);
+    applyLoadedContent(content, null);
   };
 
   // CSS更新
@@ -158,6 +188,7 @@ const App: React.FC = () => {
   return (
     <div
       className="app-container"
+      ref={appContainerRef}
       onDrop={handleDrop}
       onDragOver={handleDragOver}
     >

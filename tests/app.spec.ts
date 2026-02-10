@@ -27,7 +27,7 @@ describe('Renderer Process', () => {
   it('should have valid DOM structure', () => {
     // DOM構造の基本チェック
     const element = document.createElement('h1');
-    element.textContent = 'Markdown Viewer';
-    expect(element.textContent).toBe('Markdown Viewer');
+    element.textContent = 'MarkFlow';
+    expect(element.textContent).toBe('MarkFlow');
   });
 });

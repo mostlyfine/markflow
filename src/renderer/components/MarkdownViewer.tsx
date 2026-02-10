@@ -15,7 +15,7 @@ interface MarkdownViewerProps {
 
 const MarkdownViewer: React.FC<MarkdownViewerProps> = ({ markdown }) => {
   return (
-    <div id="markdown-viewer" className="markdown-content">
+    <div id="markflow-viewer" className="markdown-content">
       <ReactMarkdown
         remarkPlugins={[remarkGfm, remarkMath]}
         rehypePlugins={[rehypeRaw, rehypeKatex]}

@@ -1,4 +1,4 @@
-# Markdown Viewer
+# MarkFlow
 
 GFM対応のシンプルなMarkdownビューアです。
 

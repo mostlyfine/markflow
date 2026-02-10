@@ -13,6 +13,9 @@ const configStore = new ConfigStore();
 let initialFilePath: string | null = null;
 let currentFilePath: string | null = null;
 
+// アプリ名を設定（macOSメニューバーに表示）
+app.name = 'MarkFlow';
+
 /**
  * メインウィンドウを作成
  */
@@ -25,6 +28,7 @@ function createWindow(): void {
     height: windowState.height,
     x: windowState.x,
     y: windowState.y,
+    icon: join(__dirname, '../../build/icon.png'),
     webPreferences: {
       preload: join(__dirname, 'preload.mjs'),
       nodeIntegration: false,
@@ -46,7 +50,8 @@ function createWindow(): void {
   if (devServerUrl) {
     console.log('📱 Loading from dev server:', devServerUrl);
     mainWindow.loadURL(devServerUrl);
-    mainWindow.webContents.openDevTools();
+    // 開発環境でもDevToolsを自動で開かない
+    // mainWindow.webContents.openDevTools();
   } else {
     const indexPath = join(__dirname, '../dist/index.html');
     console.log('📦 Loading from file:', indexPath);

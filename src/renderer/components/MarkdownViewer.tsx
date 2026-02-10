@@ -6,6 +6,7 @@ import rehypeRaw from 'rehype-raw';
 import rehypeKatex from 'rehype-katex';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import MermaidDiagram from './MermaidDiagram';
 import 'katex/dist/katex.min.css';
 
 interface MarkdownViewerProps {
@@ -23,6 +24,12 @@ const MarkdownViewer: React.FC<MarkdownViewerProps> = ({ markdown }) => {
             const match = /language-(\w+)/.exec(className || '');
             const language = match ? match[1] : '';
 
+            // Mermaid diagram
+            if (!inline && language === 'mermaid') {
+              return <MermaidDiagram chart={String(children).replace(/\n$/, '')} />;
+            }
+
+            // Syntax highlighting for code blocks
             return !inline && language ? (
               <SyntaxHighlighter
                 style={vscDarkPlus}

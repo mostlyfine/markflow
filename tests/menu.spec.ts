@@ -35,10 +35,10 @@ describe('application menu', () => {
     expect(reloadItem?.accelerator).toBe('CmdOrCtrl+R');
   });
 
-  it('sends toggle-settings to the renderer when selected (non-mac view menu)', () => {
+  it('sends toggle-settings to the renderer when selected in view menu', () => {
     const send = vi.fn();
     const fakeWindow = { webContents: { send } } as unknown as BrowserWindow;
-    const template = buildMenuTemplate(() => fakeWindow, () => undefined, 'win32');
+    const template = buildMenuTemplate(() => fakeWindow, () => undefined, 'darwin');
     const viewMenu = template.find((item) => item.label === '表示');
     const submenuItems = normalizeSubmenu(viewMenu?.submenu);
     const toggleItem = submenuItems.find((item) => item.label === '設定...');
@@ -67,6 +67,6 @@ describe('application menu', () => {
     const viewMenu = template.find((item) => item.label === '表示');
     const viewSub = normalizeSubmenu(viewMenu?.submenu);
     const hasSettingsInView = viewSub.some((item) => item.label === '設定...');
-    expect(hasSettingsInView).toBe(false);
+    expect(hasSettingsInView).toBe(true);
   });
 });

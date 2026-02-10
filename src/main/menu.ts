@@ -66,13 +66,11 @@ export function buildMenuTemplate(
     {
       label: '表示',
       submenu: [
-        !isMac
-          ? {
-            label: '設定...',
-            accelerator: 'CmdOrCtrl+,',
-            click: () => sendToRenderer('toggle-settings'),
-          }
-          : undefined,
+        {
+          label: '設定...',
+          accelerator: 'CmdOrCtrl+,',
+          click: () => sendToRenderer('toggle-settings'),
+        },
         { type: 'separator' },
         { role: 'toggleDevTools', label: '開発者ツール' },
         { type: 'separator' },

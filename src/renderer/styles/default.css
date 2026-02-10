@@ -215,3 +215,172 @@ body {
 .markdown-content em {
   font-style: italic;
 }
+
+/* App Layout */
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  background-color: #24292f;
+  color: #ffffff;
+  border-bottom: 1px solid #d0d7de;
+}
+
+.app-header h1 {
+  font-size: 1.2em;
+  font-weight: 600;
+  margin: 0;
+}
+
+.app-main {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+.viewer-container {
+  height: 100%;
+  overflow-y: auto;
+}
+
+.settings-container {
+  height: 100%;
+  overflow-y: auto;
+  background-color: #f6f8fa;
+}
+
+/* Buttons */
+.btn-settings {
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #ffffff;
+  background-color: #0969da;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-settings:hover {
+  background-color: #0860ca;
+}
+
+.btn-settings:active {
+  background-color: #0757ba;
+}
+
+.btn-primary {
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #ffffff;
+  background-color: #2da44e;
+  border: 1px solid rgba(27, 31, 36, 0.15);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-primary:hover {
+  background-color: #2c974b;
+}
+
+.btn-primary:active {
+  background-color: #298e46;
+}
+
+.btn-secondary {
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #24292f;
+  background-color: #f6f8fa;
+  border: 1px solid rgba(27, 31, 36, 0.15);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background-color: #f3f4f6;
+}
+
+.btn-secondary:active {
+  background-color: #e9ebef;
+}
+
+/* Settings Panel */
+.settings-panel {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 40px;
+}
+
+.settings-panel h2 {
+  font-size: 1.5em;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #24292f;
+}
+
+.settings-panel p {
+  margin-bottom: 16px;
+  color: #57606a;
+}
+
+.settings-panel textarea {
+  width: 100%;
+  min-height: 400px;
+  padding: 12px;
+  font-size: 14px;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  line-height: 1.5;
+  color: #24292f;
+  background-color: #ffffff;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  resize: vertical;
+  transition: border-color 0.2s ease;
+}
+
+.settings-panel textarea:focus {
+  outline: none;
+  border-color: #0969da;
+  box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.1);
+}
+
+.settings-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+  align-items: center;
+}
+
+/* Feedback Messages */
+.feedback {
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.feedback-success {
+  color: #1a7f37;
+  background-color: #dafbe1;
+  border: 1px solid #4ac26b;
+}
+
+.feedback-error {
+  color: #d1242f;
+  background-color: #ffebe9;
+  border: 1px solid #f85149;
+}

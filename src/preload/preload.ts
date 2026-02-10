@@ -1,4 +1,4 @@
-import { contextBridge } from 'electron';
+import { contextBridge, ipcRenderer } from 'electron';
 
 /**
  * セキュアなpreloadスクリプト
@@ -13,6 +13,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
     chrome: process.versions.chrome,
     electron: process.versions.electron,
   },
+  // 設定API
+  getCustomCSS: (): Promise<string> => ipcRenderer.invoke('get-custom-css'),
+  setCustomCSS: (css: string): Promise<boolean> =>
+    ipcRenderer.invoke('set-custom-css', css),
 });
 
 // TypeScript型定義（レンダラー側で使用）
@@ -23,4 +27,6 @@ export interface ElectronAPI {
     chrome: string;
     electron: string;
   };
+  getCustomCSS: () => Promise<string>;
+  setCustomCSS: (css: string) => Promise<boolean>;
 }

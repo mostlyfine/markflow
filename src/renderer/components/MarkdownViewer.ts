@@ -55,4 +55,21 @@ export class MarkdownViewer {
   public getContentElement(): HTMLElement {
     return this.contentElement;
   }
+
+  /**
+   * カスタムCSSを適用
+   * @param css カスタムCSSテキスト
+   */
+  public applyCustomCSS(css: string): void {
+    const styleId = 'custom-markdown-css';
+    let styleElement = document.getElementById(styleId) as HTMLStyleElement;
+
+    if (!styleElement) {
+      styleElement = document.createElement('style');
+      styleElement.id = styleId;
+      document.head.appendChild(styleElement);
+    }
+
+    styleElement.textContent = css;
+  }
 }

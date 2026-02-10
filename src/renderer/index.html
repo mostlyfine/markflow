@@ -8,7 +8,20 @@
 
   <body>
     <div id="app">
-      <div id="markdown-viewer"></div>
+      <header class="app-header">
+        <h1>Markdown Viewer</h1>
+        <button id="toggle-settings" class="btn-settings">設定</button>
+      </header>
+      <main class="app-main">
+        <div id="markdown-viewer" class="viewer-container"></div>
+        <div
+          id="settings-panel"
+          class="settings-container"
+          style="display: none"
+        >
+          <div id="settings"></div>
+        </div>
+      </main>
     </div>
     <script type="module" src="./main.ts"></script>
   </body>

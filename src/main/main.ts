@@ -1,11 +1,13 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import { ConfigStore, setupConfigHandlers } from './config.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 let mainWindow: BrowserWindow | null = null;
+const configStore = new ConfigStore();
 
 /**
  * メインウィンドウを作成
@@ -34,6 +36,9 @@ function createWindow(): void {
     mainWindow = null;
   });
 }
+
+// IPC通信ハンドラをセットアップ
+setupConfigHandlers(ipcMain, configStore);
 
 /**
  * アプリケーション準備完了時の処理

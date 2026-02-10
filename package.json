@@ -1,0 +1,40 @@
+{
+  "name": "markdown-viewer",
+  "version": "0.1.0",
+  "description": "GFM-compatible Markdown viewer for macOS",
+  "main": "dist/main/main.js",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint . --ext .ts,.tsx",
+    "format": "prettier --write \"src/**/*.{ts,tsx,html,css}\""
+  },
+  "keywords": [
+    "markdown",
+    "viewer",
+    "electron",
+    "gfm"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jsdom": "^27.0.0",
+    "@types/node": "^20.11.16",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "electron": "^28.2.0",
+    "electron-builder": "^24.9.1",
+    "eslint": "^8.56.0",
+    "jsdom": "^28.0.0",
+    "prettier": "^3.2.5",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.12",
+    "vite-plugin-electron": "^0.28.2",
+    "vite-plugin-electron-renderer": "^0.14.5",
+    "vitest": "^1.2.2"
+  }
+}

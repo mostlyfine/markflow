@@ -13,6 +13,7 @@ describe('CSS Injection', () => {
     dom = new JSDOM('<!DOCTYPE html><html><head></head><body></body></html>');
     document = dom.window.document;
     global.document = document as unknown as Document;
+    global.window = dom.window as unknown as Window & typeof globalThis;
   });
 
   describe('MarkdownViewer CSS Application', () => {
@@ -142,21 +143,24 @@ describe('CSS Injection', () => {
       const { Settings } = await import('../src/renderer/components/Settings');
 
       let savedCSS = '';
-      let dispatchedEvent: CustomEvent<{ css: string }> | null = null;
+      let dispatchedEvent: Event | null = null;
 
-      global.window = {
-        electronAPI: {
-          getCustomCSS: async () => '',
-          setCustomCSS: async (css: string) => {
-            savedCSS = css;
-            return true;
-          },
-        },
-        dispatchEvent: (event: Event) => {
-          dispatchedEvent = event as CustomEvent<{ css: string }>;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (global.window as any).electronAPI = {
+        getCustomCSS: async () => '',
+        setCustomCSS: async (css: string) => {
+          savedCSS = css;
           return true;
         },
-      } as Window & typeof globalThis;
+      };
+
+      const originalDispatchEvent = global.window.dispatchEvent.bind(
+        global.window
+      );
+      global.window.dispatchEvent = (event: Event) => {
+        dispatchedEvent = event;
+        return originalDispatchEvent(event);
+      };
 
       const container = document.createElement('div');
       container.id = 'settings';

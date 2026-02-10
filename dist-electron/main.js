@@ -10,9 +10,10 @@ var __privateAdd = (obj, member, value) => member.has(obj) ? __typeError("Cannot
 var __privateSet = (obj, member, value, setter) => (__accessCheck(obj, member, "write to private field"), setter ? setter.call(obj, value) : member.set(obj, value), value);
 var __privateMethod = (obj, member, method) => (__accessCheck(obj, member, "access private method"), method);
 var _validator, _encryptionKey, _encryptionAlgorithm, _options, _defaultValues, _isInMigration, _watcher, _watchFile, _debouncedChangeHandler, _Conf_instances, prepareOptions_fn, setupValidator_fn, captureSchemaDefaults_fn, applyDefaultValues_fn, configureSerialization_fn, resolvePath_fn, initializeStore_fn, runMigrations_fn;
-import electron, { app as app$1, BrowserWindow, ipcMain as ipcMain$1 } from "electron";
+import electron, { ipcMain as ipcMain$1, shell as shell$1, app as app$1, BrowserWindow, Menu, dialog } from "electron";
 import { fileURLToPath } from "url";
-import { dirname, join } from "path";
+import { dirname, join, resolve as resolve$5 } from "path";
+import { readFile } from "fs/promises";
 import process$1 from "node:process";
 import path from "node:path";
 import { promisify, isDeepStrictEqual } from "node:util";
@@ -15596,7 +15597,14 @@ class ConfigStore {
     this.store = new ElectronStore({
       name: "markdown-viewer-config",
       defaults: {
-        customCSS: ""
+        customCSS: "",
+        windowState: {
+          width: 1200,
+          height: 800,
+          x: void 0,
+          y: void 0,
+          isMaximized: false
+        }
       }
     });
   }
@@ -15605,6 +15613,18 @@ class ConfigStore {
    */
   getCustomCSS() {
     return this.store.get("customCSS");
+  }
+  /**
+   * ウィンドウ状態を取得
+   */
+  getWindowState() {
+    return this.store.get("windowState");
+  }
+  /**
+   * ウィンドウ状態を保存
+   */
+  setWindowState(state) {
+    this.store.set("windowState", state);
   }
   /**
    * カスタムCSSを保存
@@ -15626,29 +15646,210 @@ const __filename$1 = fileURLToPath(import.meta.url);
 const __dirname$1 = dirname(__filename$1);
 let mainWindow = null;
 const configStore = new ConfigStore();
+let initialFilePath = null;
 function createWindow() {
+  const windowState = configStore.getWindowState();
   mainWindow = new BrowserWindow({
-    width: 1200,
-    height: 800,
+    width: windowState.width,
+    height: windowState.height,
+    x: windowState.x,
+    y: windowState.y,
     webPreferences: {
-      preload: join(__dirname$1, "../preload/preload.js"),
+      preload: join(__dirname$1, "preload.mjs"),
       nodeIntegration: false,
       contextIsolation: true,
       sandbox: true
     }
   });
-  if (process.env.VITE_DEV_SERVER_URL) {
-    mainWindow.loadURL(process.env.VITE_DEV_SERVER_URL);
+  if (windowState.isMaximized) {
+    mainWindow.maximize();
+  }
+  const devServerUrl = process.env.VITE_DEV_SERVER_URL;
+  console.log("🔍 VITE_DEV_SERVER_URL:", devServerUrl);
+  console.log("🔍 __dirname:", __dirname$1);
+  if (devServerUrl) {
+    console.log("📱 Loading from dev server:", devServerUrl);
+    mainWindow.loadURL(devServerUrl);
     mainWindow.webContents.openDevTools();
   } else {
-    mainWindow.loadFile(join(__dirname$1, "../../renderer/index.html"));
+    const indexPath = join(__dirname$1, "../dist/index.html");
+    console.log("📦 Loading from file:", indexPath);
+    mainWindow.loadFile(indexPath);
   }
+  mainWindow.webContents.on("did-finish-load", async () => {
+    if (initialFilePath && mainWindow) {
+      await loadFileFromCLI(initialFilePath, mainWindow);
+    }
+  });
+  const saveWindowState = () => {
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      configStore.setWindowState({
+        width: mainWindow.getNormalBounds().width,
+        height: mainWindow.getNormalBounds().height,
+        x: mainWindow.getNormalBounds().x,
+        y: mainWindow.getNormalBounds().y,
+        isMaximized: mainWindow.isMaximized()
+      });
+    }
+  };
+  mainWindow.on("resize", saveWindowState);
+  mainWindow.on("move", saveWindowState);
+  mainWindow.on("maximize", saveWindowState);
+  mainWindow.on("unmaximize", saveWindowState);
   mainWindow.on("closed", () => {
     mainWindow = null;
   });
 }
 setupConfigHandlers(ipcMain$1, configStore);
+ipcMain$1.handle("open-external", async (_event, url) => {
+  try {
+    await shell$1.openExternal(url);
+    return true;
+  } catch (error2) {
+    console.error("Failed to open external URL:", error2);
+    return false;
+  }
+});
+ipcMain$1.handle("select-file", async () => {
+  console.log("select-file IPC handler called");
+  if (!mainWindow) {
+    console.log("mainWindow is null");
+    return null;
+  }
+  console.log("Showing file dialog...");
+  const result = await dialog.showOpenDialog(mainWindow, {
+    properties: ["openFile"],
+    filters: [
+      { name: "Markdown", extensions: ["md", "markdown"] },
+      { name: "Text", extensions: ["txt"] },
+      { name: "All Files", extensions: ["*"] }
+    ]
+  });
+  console.log("Dialog result:", result);
+  if (result.canceled || result.filePaths.length === 0) {
+    console.log("User canceled or no files selected");
+    return null;
+  }
+  const filePath = result.filePaths[0];
+  try {
+    const fs2 = await import("fs");
+    const stats = fs2.statSync(filePath);
+    const MAX_FILE_SIZE = 10 * 1024 * 1024;
+    if (stats.size > MAX_FILE_SIZE) {
+      throw new Error("ファイルサイズが大きすぎます（最大10MB）");
+    }
+    const content2 = await readFile(filePath, "utf-8");
+    return { filePath, content: content2 };
+  } catch (error2) {
+    console.error("File read error:", error2);
+    throw error2;
+  }
+});
+function setupMenu() {
+  const template = [
+    {
+      label: "ファイル",
+      submenu: [
+        {
+          label: "ファイルを開く...",
+          accelerator: "CmdOrCtrl+O",
+          click: async () => {
+            if (mainWindow) {
+              mainWindow.webContents.send("trigger-file-open");
+            }
+          }
+        },
+        { type: "separator" },
+        {
+          label: "終了",
+          accelerator: "CmdOrCtrl+Q",
+          click: () => {
+            app$1.quit();
+          }
+        }
+      ]
+    },
+    {
+      label: "表示",
+      submenu: [
+        {
+          label: "設定...",
+          accelerator: "CmdOrCtrl+,",
+          click: () => {
+            if (mainWindow) {
+              mainWindow.webContents.send("toggle-settings");
+            }
+          }
+        },
+        { type: "separator" },
+        { role: "reload", label: "再読み込み" },
+        { role: "toggleDevTools", label: "開発者ツール" },
+        { type: "separator" },
+        { role: "resetZoom", label: "実際のサイズ" },
+        { role: "zoomIn", label: "拡大" },
+        { role: "zoomOut", label: "縮小" },
+        { type: "separator" },
+        { role: "togglefullscreen", label: "フルスクリーン" }
+      ]
+    },
+    {
+      label: "編集",
+      submenu: [
+        { role: "undo", label: "元に戻す" },
+        { role: "redo", label: "やり直す" },
+        { type: "separator" },
+        { role: "cut", label: "切り取り" },
+        { role: "copy", label: "コピー" },
+        { role: "paste", label: "貼り付け" },
+        { role: "selectAll", label: "すべて選択" }
+      ]
+    },
+    {
+      label: "編集",
+      submenu: [
+        { role: "undo", label: "元に戻す" },
+        { role: "redo", label: "やり直す" },
+        { type: "separator" },
+        { role: "cut", label: "切り取り" },
+        { role: "copy", label: "コピー" },
+        { role: "paste", label: "貼り付け" },
+        { role: "selectAll", label: "すべて選択" }
+      ]
+    }
+  ];
+  const menu = Menu.buildFromTemplate(template);
+  Menu.setApplicationMenu(menu);
+}
+async function loadFileFromCLI(filePath, window) {
+  try {
+    const absolutePath = resolve$5(filePath);
+    console.log("📄 Loading file from CLI:", absolutePath);
+    const content2 = await readFile(absolutePath, "utf-8");
+    window.webContents.send("load-file-from-cli", {
+      filePath: absolutePath,
+      content: content2
+    });
+  } catch (error2) {
+    console.error("Failed to load file from CLI:", error2);
+    dialog.showErrorBox(
+      "ファイル読み込みエラー",
+      `ファイルを開けませんでした: ${filePath}`
+    );
+  }
+}
+function processCommandLineArgs() {
+  const args = process.argv.slice(process.defaultApp ? 2 : 1);
+  const filePath = args.find(
+    (arg) => !arg.startsWith("-") && (arg.endsWith(".md") || arg.endsWith(".markdown") || arg.endsWith(".txt"))
+  );
+  if (filePath) {
+    initialFilePath = filePath;
+    console.log("📋 File specified in CLI:", filePath);
+  }
+}
 app$1.whenReady().then(() => {
+  processCommandLineArgs();
+  setupMenu();
   createWindow();
   app$1.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {

@@ -1,0 +1,261 @@
+import { ElectronAPI } from '../preload/preload';
+import { MarkdownViewer } from './components/MarkdownViewer';
+import { Settings } from './components/Settings';
+import './styles/default.css';
+import 'highlight.js/styles/github-dark.css';
+
+console.log('🚀 main.ts loaded');
+
+declare global {
+  interface Window {
+    electronAPI: ElectronAPI;
+  }
+}
+
+let viewer: MarkdownViewer;
+let settings: Settings;
+let hasFileLoaded = false;
+
+/**
+ * レンダラープロセスの初期化
+ */
+async function initializeRenderer(): Promise<void> {
+  console.log('🔧 initializeRenderer called');
+  console.log('📍 Document ready state:', document.readyState);
+  // MarkdownViewerの初期化
+  viewer = new MarkdownViewer('markdown-viewer');
+
+  // 設定画面の初期化
+  settings = new Settings('settings');
+
+  // 保存されているカスタムCSSを読み込んで適用
+  await loadAndApplyCustomCSS();
+
+  // CSS更新イベントのリスナー
+  window.addEventListener('css-updated', handleCSSUpdate);
+
+  // ファイル読み込みイベントのリスナー
+  window.addEventListener('file-loaded', handleFileLoaded);
+
+  // メニューからのファイルを開くイベント
+  if (window.electronAPI?.onFileOpen) {
+    window.electronAPI.onFileOpen(openFileDialog);
+  }
+
+  // メニューからの設定画面トグルイベント
+  if (window.electronAPI?.onToggleSettings) {
+    window.electronAPI.onToggleSettings(toggleSettings);
+  }
+
+  // CLIから渡されたファイルを開くイベント
+  if (window.electronAPI?.onFileOpenFromCLI) {
+    window.electronAPI.onFileOpenFromCLI((data) => {
+      console.log('📋 Loading file from CLI:', data.filePath);
+      hasFileLoaded = true;
+      viewer.render(data.content);
+    });
+  }
+
+  // ドラッグ&ドロップの設定
+  setupDragAndDrop();
+
+  // 外部リンククリックハンドラの設定
+  setupExternalLinkHandler();
+
+  // README.mdを読み込んで表示
+  await loadDefaultReadme();
+}
+
+/**
+ * カスタムCSSを読み込んで適用
+ */
+async function loadAndApplyCustomCSS(): Promise<void> {
+  try {
+    const css = await window.electronAPI.getCustomCSS();
+    if (css) {
+      viewer.applyCustomCSS(css);
+    }
+    // 設定画面にもCSSを読み込む
+    await settings.loadCSS();
+  } catch (error) {
+    console.error('Failed to load custom CSS:', error);
+  }
+}
+
+/**
+ * 設定パネルの表示/非表示を切り替え
+ */
+function toggleSettings(): void {
+  const settingsPanel = document.getElementById('settings-panel');
+  const viewerContainer = document.getElementById('markdown-viewer');
+
+  if (settingsPanel && viewerContainer) {
+    const isVisible = settingsPanel.style.display !== 'none';
+
+    if (isVisible) {
+      // 設定を閉じる
+      settingsPanel.style.display = 'none';
+      viewerContainer.style.display = 'block';
+    } else {
+      // 設定を開く
+      settingsPanel.style.display = 'block';
+      viewerContainer.style.display = 'none';
+      // 設定を開いたときに最新のCSSを読み込む
+      settings.loadCSS();
+    }
+  }
+}
+
+/**
+ * CSS更新イベントを処理
+ */
+function handleCSSUpdate(event: Event): void {
+  const customEvent = event as CustomEvent;
+  const css = customEvent.detail?.css;
+
+  if (css !== undefined) {
+    viewer.applyCustomCSS(css);
+  }
+}
+
+/**
+ * ファイル読み込みイベントを処理
+ */
+function handleFileLoaded(event: Event): void {
+  const customEvent = event as CustomEvent;
+  const content = customEvent.detail?.content;
+
+  if (content !== undefined) {
+    hasFileLoaded = true;
+    try {
+      viewer.render(content);
+    } catch (error) {
+      console.error('Render error:', error);
+      viewer.showError('Markdownのレンダリングに失敗しました');
+    }
+  }
+}
+
+/**
+ * ファイル選択ダイアログを開く
+ */
+async function openFileDialog(): Promise<void> {
+  try {
+    const result = await window.electronAPI.selectFile();
+
+    if (!result) {
+      return;
+    }
+
+    hasFileLoaded = true;
+
+    // file-loadedイベントを発火
+    const event = new CustomEvent('file-loaded', {
+      detail: {
+        filePath: result.filePath,
+        content: result.content,
+      },
+    });
+    window.dispatchEvent(event);
+  } catch (error) {
+    console.error('File loading error:', error);
+    viewer.showError('ファイルの読み込みに失敗しました');
+  }
+}
+
+/**
+ * デフォルトのgfm.mdを読み込んで表示
+ */
+async function loadDefaultReadme(): Promise<void> {
+  if (hasFileLoaded) {
+    return;
+  }
+
+  try {
+    const response = await fetch('./gfm.md');
+    if (response.ok) {
+      const content = await response.text();
+      viewer.render(content);
+    }
+  } catch (error) {
+    console.error('Failed to load gfm.md:', error);
+  }
+}
+
+/**
+ * 外部リンククリックハンドラを設定
+ */
+function setupExternalLinkHandler(): void {
+  document.addEventListener('click', (event) => {
+    const target = event.target as HTMLElement;
+    // クリックされた要素がリンクまたはリンク内の要素か確認
+    const link = target.closest('a');
+    if (link && link.href) {
+      // 外部リンク（http/https）のみ処理
+      if (link.href.startsWith('http://') || link.href.startsWith('https://')) {
+        event.preventDefault();
+        window.electronAPI.openExternal(link.href);
+      }
+    }
+  });
+}
+
+/**
+ * ドラッグ&ドロップの設定
+ */
+function setupDragAndDrop(): void {
+  const dropZone = document.body;
+
+  dropZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dropZone.classList.add('drag-over');
+  });
+
+  dropZone.addEventListener('dragleave', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dropZone.classList.remove('drag-over');
+  });
+
+  dropZone.addEventListener('drop', async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dropZone.classList.remove('drag-over');
+
+    const files = e.dataTransfer?.files;
+    if (!files || files.length === 0) return;
+
+    const file = files[0];
+
+    // Markdownファイルかチェック
+    if (!file.name.match(/\.(md|markdown|txt)$/i)) {
+      viewer.showError('Markdownファイルを選択してください');
+      return;
+    }
+
+    try {
+      const content = await file.text();
+      hasFileLoaded = true;
+
+      // file-loadedイベントを発火
+      const event = new CustomEvent('file-loaded', {
+        detail: {
+          filePath: file.name,
+          content: content,
+        },
+      });
+      window.dispatchEvent(event);
+    } catch (error) {
+      console.error('File reading error:', error);
+      viewer.showError('ファイルの読み込みに失敗しました');
+    }
+  });
+}
+
+// DOMContentLoaded後に初期化
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializeRenderer);
+} else {
+  initializeRenderer();
+}

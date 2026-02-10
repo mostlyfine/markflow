@@ -117,8 +117,11 @@ describe('Markdown Rendering', () => {
       const markdown = '```javascript\nconst x = 42;\n```';
       const html = renderMarkdown(markdown);
 
+      expect(html).toContain('<pre>');
       expect(html).toContain('<code');
-      expect(html).toContain('const x = 42;');
+      expect(html).toContain('class="hljs language-javascript"');
+      expect(html).toContain('const');
+      expect(html).toContain('42');
     });
 
     it('should include language class for syntax highlighting', async () => {
@@ -126,8 +129,10 @@ describe('Markdown Rendering', () => {
       const markdown = '```python\ndef hello():\n    print("Hello")\n```';
       const html = renderMarkdown(markdown);
 
-      expect(html).toContain('language-python');
-      expect(html).toContain('def hello()');
+      expect(html).toContain('class="hljs language-python"');
+      expect(html).toContain('def');
+      expect(html).toContain('hello');
+      expect(html).toContain('print');
     });
   });
 

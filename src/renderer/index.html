@@ -1,28 +1,17 @@
 <!doctype html>
 <html lang="ja">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Markdown Viewer</title>
-  </head>
 
-  <body>
-    <div id="app">
-      <header class="app-header">
-        <h1>Markdown Viewer</h1>
-        <button id="toggle-settings" class="btn-settings">設定</button>
-      </header>
-      <main class="app-main">
-        <div id="markdown-viewer" class="viewer-container"></div>
-        <div
-          id="settings-panel"
-          class="settings-container"
-          style="display: none"
-        >
-          <div id="settings"></div>
-        </div>
-      </main>
-    </div>
-    <script type="module" src="./main.ts"></script>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:;" />
+  <title>Markdown Viewer</title>
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="./main.tsx"></script>
+</body>
+
 </html>

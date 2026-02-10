@@ -6,6 +6,18 @@ import { IpcMain } from 'electron';
  */
 interface ConfigSchema {
   customCSS: string;
+  windowState: WindowState;
+}
+
+/**
+ * ウィンドウの状態
+ */
+interface WindowState {
+  width: number;
+  height: number;
+  x: number | undefined;
+  y: number | undefined;
+  isMaximized: boolean;
 }
 
 type ElectronStore<T> = {
@@ -25,6 +37,13 @@ export class ConfigStore {
       name: 'markdown-viewer-config',
       defaults: {
         customCSS: '',
+        windowState: {
+          width: 1200,
+          height: 800,
+          x: undefined,
+          y: undefined,
+          isMaximized: false,
+        },
       },
     }) as ElectronStore<ConfigSchema> & Store<ConfigSchema>;
   }
@@ -34,6 +53,20 @@ export class ConfigStore {
    */
   getCustomCSS(): string {
     return this.store.get('customCSS');
+  }
+
+  /**
+   * ウィンドウ状態を取得
+   */
+  getWindowState(): WindowState {
+    return this.store.get('windowState');
+  }
+
+  /**
+   * ウィンドウ状態を保存
+   */
+  setWindowState(state: WindowState): void {
+    this.store.set('windowState', state);
   }
 
   /**

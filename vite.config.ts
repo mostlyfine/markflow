@@ -1,15 +1,30 @@
 import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
 import electron from 'vite-plugin-electron/simple';
 import { resolve } from 'path';
 
 export default defineConfig({
+  root: 'src/renderer',
+  base: './',
+  publicDir: '../../public',
   plugins: [
+    react(),
     electron({
       main: {
-        entry: 'src/main/main.ts',
+        entry: resolve(__dirname, 'src/main/main.ts'),
+        vite: {
+          build: {
+            outDir: resolve(__dirname, 'dist-electron'),
+          },
+        },
       },
       preload: {
-        input: 'src/preload/preload.ts',
+        input: resolve(__dirname, 'src/preload/preload.ts'),
+        vite: {
+          build: {
+            outDir: resolve(__dirname, 'dist-electron'),
+          },
+        },
       },
       renderer: {},
     }),
@@ -20,14 +35,13 @@ export default defineConfig({
     },
   },
   build: {
-    rollupOptions: {
-      input: {
-        index: resolve(__dirname, 'src/renderer/index.html'),
-      },
-    },
+    outDir: '../../dist',
+    emptyOutDir: true,
   },
   test: {
     globals: true,
     environment: 'jsdom',
+    include: ['tests/**/*.{test,spec}.ts', 'src/**/*.{test,spec}.ts'],
+    root: '.',
   },
 });

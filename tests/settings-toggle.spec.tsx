@@ -41,6 +41,11 @@ describe('settings toggle wiring', () => {
         onFileReload: vi.fn(),
         onToggleSettings: vi.fn((callback: () => void) => {
           toggleCallbacks.push(callback);
+          return () => {
+            toggleCallbacks = toggleCallbacks.filter(
+              (entry) => entry !== callback
+            );
+          };
         }),
         onFileOpenFromCLI: vi.fn(),
         openExternal: vi.fn(),
@@ -81,5 +86,48 @@ describe('settings toggle wiring', () => {
     });
 
     expect(container.querySelector('#settings-panel')).toBeNull();
+  });
+
+  it('renders settings with expected styling classes', async () => {
+    await act(async () => {
+      root.render(<App />);
+      await Promise.resolve();
+    });
+
+    await act(async () => {
+      toggleCallbacks[0]();
+    });
+
+    const panel = container.querySelector('#settings-panel');
+    expect(panel).not.toBeNull();
+    expect(panel?.classList.contains('settings-panel')).toBe(true);
+
+    const actions = panel?.querySelector('.settings-actions');
+    expect(actions).not.toBeNull();
+
+    const saveButton = actions?.querySelector('button');
+    expect(saveButton?.classList.contains('btn-primary')).toBe(true);
+
+    const closeButton = actions?.querySelector('button:last-child');
+    expect(closeButton?.classList.contains('btn-close')).toBe(true);
+  });
+
+  it('opens settings when toggle event fires under StrictMode', async () => {
+    await act(async () => {
+      root.render(
+        <React.StrictMode>
+          <App />
+        </React.StrictMode>
+      );
+      await Promise.resolve();
+    });
+
+    expect(container.querySelector('#settings-panel')).toBeNull();
+
+    await act(async () => {
+      toggleCallbacks.forEach((callback) => callback());
+    });
+
+    expect(container.querySelector('#settings-panel')).not.toBeNull();
   });
 });

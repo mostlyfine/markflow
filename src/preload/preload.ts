@@ -25,20 +25,36 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // メニューからのファイルを開くイベント
   onFileOpen: (callback: () => void) => {
     ipcRenderer.on('trigger-file-open', callback);
+    return () => {
+      ipcRenderer.removeListener('trigger-file-open', callback);
+    };
   },
   // メニューからのファイル再読み込みイベント
   onFileReload: (callback: () => void) => {
     ipcRenderer.on('trigger-file-reload', callback);
+    return () => {
+      ipcRenderer.removeListener('trigger-file-reload', callback);
+    };
   },
   // メニューからの設定画面トグルイベント
   onToggleSettings: (callback: () => void) => {
     ipcRenderer.on('toggle-settings', callback);
+    return () => {
+      ipcRenderer.removeListener('toggle-settings', callback);
+    };
   },
   // CLIから渡されたファイルを開くイベント
   onFileOpenFromCLI: (
-    callback: (data: { filePath: string; content: string }) => void,
+    callback: (data: { filePath: string; content: string }) => void
   ) => {
-    ipcRenderer.on('load-file-from-cli', (_event, data) => callback(data));
+    const handler = (
+      _event: Electron.IpcRendererEvent,
+      data: { filePath: string; content: string }
+    ) => callback(data);
+    ipcRenderer.on('load-file-from-cli', handler);
+    return () => {
+      ipcRenderer.removeListener('load-file-from-cli', handler);
+    };
   },
   // 外部リンクを開く
   openExternal: (url: string): Promise<boolean> =>
@@ -57,11 +73,11 @@ export interface ElectronAPI {
   setCustomCSS: (css: string) => Promise<boolean>;
   selectFile: () => Promise<{ filePath: string; content: string } | null>;
   reloadFile: () => Promise<{ filePath: string; content: string } | null>;
-  onFileOpen: (callback: () => void) => void;
-  onFileReload: (callback: () => void) => void;
-  onToggleSettings: (callback: () => void) => void;
+  onFileOpen: (callback: () => void) => void | (() => void);
+  onFileReload: (callback: () => void) => void | (() => void);
+  onToggleSettings: (callback: () => void) => void | (() => void);
   onFileOpenFromCLI: (
-    callback: (data: { filePath: string; content: string }) => void,
-  ) => void;
+    callback: (data: { filePath: string; content: string }) => void
+  ) => void | (() => void);
   openExternal: (url: string) => Promise<boolean>;
 }

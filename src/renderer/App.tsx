@@ -49,7 +49,7 @@ const App: React.FC = () => {
       hasFileLoadedRef.current = true;
       setScrollToken((prev) => prev + 1);
     },
-    [],
+    []
   );
 
   // 初期化: デフォルトファイル読み込み
@@ -115,9 +115,11 @@ const App: React.FC = () => {
 
   // ElectronAPIイベントリスナー
   useEffect(() => {
+    const disposers: Array<() => void> = [];
+
     // メニューからのファイルを開く
     if (window.electronAPI?.onFileOpen) {
-      window.electronAPI.onFileOpen(async () => {
+      const disposer = window.electronAPI.onFileOpen(async () => {
         try {
           const result = await window.electronAPI.selectFile();
           if (result) {
@@ -128,11 +130,12 @@ const App: React.FC = () => {
           console.error('File loading error:', error);
         }
       });
+      if (disposer) disposers.push(disposer);
     }
 
     // メニューからのファイル再読み込み
     if (window.electronAPI?.onFileReload) {
-      window.electronAPI.onFileReload(async () => {
+      const disposer = window.electronAPI.onFileReload(async () => {
         try {
           const result = await window.electronAPI.reloadFile();
           if (result) {
@@ -145,22 +148,29 @@ const App: React.FC = () => {
           console.error('File reload error:', error);
         }
       });
+      if (disposer) disposers.push(disposer);
     }
 
     // メニューからの設定画面トグル
     if (window.electronAPI?.onToggleSettings) {
-      window.electronAPI.onToggleSettings(() => {
+      const disposer = window.electronAPI.onToggleSettings(() => {
         setShowSettings((prev) => !prev);
       });
+      if (disposer) disposers.push(disposer);
     }
 
     // CLIから渡されたファイルを開く
     if (window.electronAPI?.onFileOpenFromCLI) {
-      window.electronAPI.onFileOpenFromCLI((data) => {
+      const disposer = window.electronAPI.onFileOpenFromCLI((data) => {
         console.log('📋 Loading file from CLI:', data.filePath);
         applyLoadedContent(data.content, data.filePath);
       });
+      if (disposer) disposers.push(disposer);
     }
+
+    return () => {
+      disposers.forEach((dispose) => dispose());
+    };
   }, [applyLoadedContent]);
 
   // ファイルロード

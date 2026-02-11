@@ -42,7 +42,11 @@ const Settings: React.FC<SettingsProps> = ({ onClose, onCSSUpdate }) => {
 
   return (
     <div id="settings-panel" className="settings-panel">
-      <h2>設定</h2>
+      <div className="settings-header">
+        <h2>設定</h2>
+      </div>
+
+      <p>Markdownビューアに適用するカスタムCSSを編集できます。</p>
 
       <div className="settings-section">
         <h3>カスタムCSS</h3>
@@ -51,15 +55,20 @@ const Settings: React.FC<SettingsProps> = ({ onClose, onCSSUpdate }) => {
           onChange={(e) => setCSS(e.target.value)}
           placeholder="カスタムCSSを入力してください..."
           rows={20}
-          style={{ width: '100%', fontFamily: 'monospace' }}
         />
       </div>
 
       <div className="settings-actions">
-        <button onClick={handleSave} disabled={isSaving}>
+        <button
+          className="btn-primary"
+          onClick={handleSave}
+          disabled={isSaving}
+        >
           {isSaving ? '保存中...' : '保存'}
         </button>
-        <button onClick={onClose}>閉じる</button>
+        <button className="btn-close" onClick={onClose}>
+          閉じる
+        </button>
       </div>
     </div>
   );

@@ -1,101 +1,98 @@
 # MarkFlow
 
-GitHub Flavored Markdown対応のElectronベースのMarkdownビューア
+Electron-based Markdown viewer with first-class GitHub Flavored Markdown (GFM) support.
 
-## 機能
+## Features
 
-- ✅ GitHub Flavored Markdown (GFM)完全対応
-- ✅ シンタックスハイライト (react-syntax-highlighter + Prism)
-- ✅ LaTeX数式表示 (KaTeX)
-- ✅ Mermaidダイアグラム対応
-- ✅ 外部リンクをデフォルトブラウザで開く
-- ✅ CLIからのファイル指定起動
-- ✅ カスタムCSS設定
-- ✅ ファイル再読み込み (Cmd+R / Ctrl+R)
-- ✅ ドラッグ&ドロップでファイル読み込み
+- ✅ Full GitHub Flavored Markdown (GFM) support
+- ✅ Syntax highlighting (react-syntax-highlighter + Prism)
+- ✅ LaTeX math rendering with KaTeX
+- ✅ Mermaid diagram rendering
+- ✅ External links open in the default browser
+- ✅ Launch with files specified via the CLI
+- ✅ Custom CSS overrides
+- ✅ File reload shortcut (Cmd+R / Ctrl+R)
+- ✅ Drag-and-drop file loading
 
-## 開発
+## Development
 
-### 必要なもの
+### Requirements
 
-- Node.js 20以上
+- Node.js 20+
 - npm
 
-## セットアップ
+## Setup
 
 ```bash
-# 依存関係のインストール
+# Install dependencies
 npm install
 
-# 開発モードで起動
+# Start in development mode
 npm run dev
 
-# ビルド
+# Type-check and bundle
 npm run build
 
-# アプリケーションパッケージ作成（すべてのプラットフォーム）
+# Produce installers for every platform
 npm run dist
 
-# macOS用
+# Platform-specific bundles
 npm run dist:mac
-
-# Windows用
 npm run dist:win
-
-# Linux用
 npm run dist:linux
 
-# テスト実行
+# Run tests
 npm test
 
-# Lint実行
+# Lint sources
 npm run lint
 
-# フォーマット実行
+# Format sources
 npm run format
 
-# クリーン
+# Clean build artifacts
 npm run clean
 ```
 
-## リリース
+## Release
 
-### GitHub Actionsによる自動ビルド
+### Automated release via GitHub Actions
 
-1. バージョンタグをプッシュ:
+1. Push a version tag:
+
 ```bash
 git tag v1.0.0
 git push origin v1.0.0
 ```
 
-2. GitHub Actionsが自動的に以下を実行:
+2. GitHub Actions builds installers automatically:
    - macOS (x64, arm64): DMG, ZIP
-   - Windows (x64): NSIS installer, Portable
+   - Windows (x64): NSIS installer, portable ZIP
    - Linux (x64): AppImage, DEB
 
-3. リリースページに成果物が自動的にアップロード
+3. Artifacts are uploaded to the GitHub Releases page.
 
-### 手動リリース
+### Manual release
 
-GitHub Actionsの"Build and Release"ワークフローから手動実行も可能
+You can also trigger the "Build and Release" workflow manually from GitHub Actions.
 
-## プロジェクト構造
+## Project Structure
 
 ```
 markflow/
 ├── .github/
 │   └── workflows/
-│       └── release.yml     # GitHub Actions設定
-├── build/                  # アイコン等のビルドリソース
-├── public/                 # 公開アセット
+│       └── release.yml     # GitHub Actions workflow
+├── build/                  # Icons and other build assets
+├── public/                 # Static assets (welcome copy, sample markdown)
 │   └── gfm.md
 ├── src/
-│   ├── main/               # Electronメインプロセス
+│   ├── main/               # Electron main process
 │   │   ├── main.ts
 │   │   └── config.ts
-│   ├── preload/            # preloadスクリプト
+│   ├── preload/            # Preload bridge
 │   │   └── preload.ts
-│   └── renderer/           # レンダラープロセス (React)
+│   └── renderer/           # React renderer process
 │       ├── index.html
 │       ├── main.tsx
 │       ├── App.tsx
@@ -106,33 +103,33 @@ markflow/
 │       │   └── FileLoader.tsx
 │       └── styles/
 │           └── default.css
-├── tests/                  # テスト
+├── tests/                  # Vitest suites
 ├── package.json
 ├── tsconfig.json
 └── vite.config.ts
 ```
 
-## 技術スタック
+## Technology Stack
 
-- **フレームワーク**: Electron 28
+- **Framework**: Electron 28
 - **UI**: React 19
-- **ビルドツール**: Vite 5 + vite-plugin-electron
-- **パッケージャー**: electron-builder 24
+- **Build tool**: Vite 5 + vite-plugin-electron
+- **Packager**: electron-builder 24
 - **Markdown**: react-markdown + remark-gfm
-- **コードハイライト**: react-syntax-highlighter (Prism)
-- **数式**: KaTeX
-- **ダイアグラム**: Mermaid.js
-- **言語**: TypeScript 5
-- **テスト**: Vitest
+- **Syntax highlighting**: react-syntax-highlighter (Prism)
+- **Math**: KaTeX
+- **Diagrams**: Mermaid.js
+- **Language**: TypeScript 5
+- **Tests**: Vitest
 
-## セキュリティ
+## Security
 
-- `contextIsolation: true` でレンダラープロセスを分離
-- `nodeIntegration: false` でNode.js統合を無効化
-- `sandbox: true` でサンドボックス化
-- contextBridgeを使用した安全なAPI公開
-- rehypeプラグインによるHTML sanitization
+- `contextIsolation: true` to isolate the renderer process
+- `nodeIntegration: false` to disable Node.js in the renderer
+- `sandbox: true` for additional hardening
+- All renderer APIs exposed via contextBridge
+- HTML sanitized with rehype plugins
 
-## ライセンス
+## License
 
 MIT

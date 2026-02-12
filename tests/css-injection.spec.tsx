@@ -84,7 +84,7 @@ describe('CSS injection and persistence', () => {
 
     const textarea = container.querySelector('textarea');
     const saveButton = Array.from(container.querySelectorAll('button')).find((button) =>
-      button.textContent?.includes('保存')
+      button.textContent?.includes('Save')
     );
 
     await act(async () => { await Promise.resolve(); });

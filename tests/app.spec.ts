@@ -1,23 +1,23 @@
 import { describe, it, expect } from 'vitest';
 
 describe('Electron App', () => {
-  // 将来的にElectronプロセスの起動テストを追加予定
+  // Placeholder for future Electron integration tests
 
   it('should start the application', () => {
-    // Phase 1では基本的なアサーションのみ
+    // Minimal assertion for early phases
     expect(true).toBe(true);
   });
 
   it('should have main process entry point', () => {
-    // メインプロセスの存在確認
-    const hasMainProcess = true; // ビルド成功により確認済み
+    // Ensure the main process entry exists
+    const hasMainProcess = true; // Confirmed via successful build
     expect(hasMainProcess).toBe(true);
   });
 });
 
 describe('Renderer Process', () => {
   it('should initialize renderer', () => {
-    // レンダラープロセスの初期化テスト
+    // Basic renderer initialization check
     const rendererElement = document.createElement('div');
     rendererElement.id = 'app';
     expect(rendererElement).toBeTruthy();
@@ -25,7 +25,7 @@ describe('Renderer Process', () => {
   });
 
   it('should have valid DOM structure', () => {
-    // DOM構造の基本チェック
+    // Basic DOM structure check
     const element = document.createElement('h1');
     element.textContent = 'MarkFlow';
     expect(element.textContent).toBe('MarkFlow');

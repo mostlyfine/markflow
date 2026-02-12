@@ -52,7 +52,7 @@ const App: React.FC = () => {
     []
   );
 
-  // 初期化: デフォルトファイル読み込み
+  // Load the default welcome file on first boot
   useEffect(() => {
     const loadDefaultFile = async () => {
       if (hasFileLoadedRef.current) return;
@@ -74,7 +74,7 @@ const App: React.FC = () => {
     loadDefaultFile();
   }, [applyLoadedContent]);
 
-  // カスタムCSS読み込み
+  // Load persisted custom CSS
   useEffect(() => {
     const loadCustomCSS = async () => {
       try {
@@ -90,7 +90,7 @@ const App: React.FC = () => {
     loadCustomCSS();
   }, []);
 
-  // 現在のファイルパスの変更を監視
+  // Update document title when the current file changes
   useEffect(() => {
     if (currentFilePath) {
       console.log('📌 Current file:', currentFilePath);
@@ -100,7 +100,7 @@ const App: React.FC = () => {
     }
   }, [currentFilePath]);
 
-  // markdownの変更を監視してスクロール位置をリセット
+  // Reset scroll position whenever markdown content changes
   useEffect(() => {
     if (!hasFileLoaded) return;
 
@@ -113,11 +113,11 @@ const App: React.FC = () => {
     };
   }, [hasFileLoaded, scrollToken, resetScrollPosition]);
 
-  // ElectronAPIイベントリスナー
+  // Wire up Electron bridge listeners
   useEffect(() => {
     const disposers: Array<() => void> = [];
 
-    // メニューからのファイルを開く
+    // Open files via the application menu
     if (window.electronAPI?.onFileOpen) {
       const disposer = window.electronAPI.onFileOpen(async () => {
         try {
@@ -133,7 +133,7 @@ const App: React.FC = () => {
       if (disposer) disposers.push(disposer);
     }
 
-    // メニューからのファイル再読み込み
+    // Reload files from the application menu
     if (window.electronAPI?.onFileReload) {
       const disposer = window.electronAPI.onFileReload(async () => {
         try {
@@ -151,7 +151,7 @@ const App: React.FC = () => {
       if (disposer) disposers.push(disposer);
     }
 
-    // メニューからの設定画面トグル
+    // Toggle the settings panel from the menu
     if (window.electronAPI?.onToggleSettings) {
       const disposer = window.electronAPI.onToggleSettings(() => {
         setShowSettings((prev) => !prev);
@@ -159,7 +159,7 @@ const App: React.FC = () => {
       if (disposer) disposers.push(disposer);
     }
 
-    // CLIから渡されたファイルを開く
+    // Load files provided via CLI
     if (window.electronAPI?.onFileOpenFromCLI) {
       const disposer = window.electronAPI.onFileOpenFromCLI((data) => {
         console.log('📋 Loading file from CLI:', data.filePath);
@@ -173,17 +173,17 @@ const App: React.FC = () => {
     };
   }, [applyLoadedContent]);
 
-  // ファイルロード
+  // Load newly selected file content
   const handleFileLoad = (content: string) => {
     applyLoadedContent(content, null);
   };
 
-  // CSS更新
+  // Update CSS when settings is saved
   const handleCSSUpdate = (css: string) => {
     setCustomCSS(css);
   };
 
-  // ドラッグ&ドロップ
+  // Handle drag and drop file loading
   const handleDrop = async (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -193,7 +193,7 @@ const App: React.FC = () => {
 
     const file = files[0];
     if (!file.name.match(/\.(md|markdown|txt)$/i)) {
-      alert('Markdownファイルを選択してください');
+      alert('Please select a Markdown file');
       return;
     }
 

@@ -1,52 +1,85 @@
-## Plan: macOS向けMarkdownビューア
+## Plan: Markdown Viewer for macOS
 
-ElectronとViteでGFM対応のMarkdownビューアを新規構築します。TypeScriptで型安全性を確保し、electron-storeで設定永続化を行い、CSSカスタマイズ可能な設定画面とデフォルトCSSを用意します。TDDに従って段階的に実装します。
+This plan describes how to build a GitHub Flavored Markdown (GFM) viewer for macOS using Electron and Vite. Users can open any Markdown file, view it in a polished GitHub-like UI, and edit custom CSS that updates instantly in the preview. The project follows TDD, exposes only secure preload bridges, and ships with a safe Markdown parser plus a complete test strategy.
 
-**Phases 4 phases**
-1. **Phase 1: 基盤セットアップ**
-   - **Objective:** Electron+Viteのプロジェクト構成、最小起動、テスト基盤（Vitest）の整備を行う
-   - **Files/Functions to Modify/Create:** package.json, vite.config.ts, tsconfig.json, src/main/main.ts, src/preload/preload.ts, src/renderer/index.html, src/renderer/main.ts, tests/app.spec.ts
-   - **Tests to Write:** アプリが起動してウィンドウが表示されるテスト、レンダラープロセスの初期化テスト
-   - **Steps:**
-        1. プロジェクト構成とテスト基盤のテストを作成して失敗を確認
-        2. package.json、Vite設定、Electronエントリポイント、最小のレンダラーHTMLを作成
-        3. アプリが起動してテストが通ることを確認
-        4. Lintとフォーマットを実行
+### Goals
+1. Electron app tailored for macOS conventions
+2. High-quality rendering for GitHub Flavored Markdown
+3. DOMPurify + CSS sandboxing for XSS defense
+4. Custom CSS editor with instant preview updates
+5. File loader that validates extensions and sizes up to 10 MB
+6. Comprehensive unit and integration tests for all critical logic
+7. Strict adherence to Electron security best practices (contextIsolation, sandbox, nodeIntegration disabled)
 
-2. **Phase 2: GFMレンダリング**
-   - **Objective:** marked-gfmでGFM対応のMarkdown→HTMLレンダリングとプレビュー表示を実装
-   - **Files/Functions to Modify/Create:** src/renderer/main.ts, src/renderer/markdown.ts, src/renderer/components/MarkdownViewer.ts, src/renderer/styles/default.css, tests/markdown.spec.ts
-   - **Tests to Write:** GFM要素（テーブル、タスクリスト、コードブロック、URL自動リンク）のレンダリングテスト、プレビュー表示のテスト
-   - **Steps:**
-        1. GFM要素のレンダリングテストを追加し失敗を確認
-        2. markedとmarked-gfmをインストールし最小限のレンダリング実装を追加
-        3. 各GFM機能を順に実装してテストを通す
-        4. デフォルトCSSを作成してプレビューに適用
-        5. Lintとフォーマットを実行
+### System Layout
+- Electron main: window lifecycle, IPC handlers, persistent config
+- Preload: exposes minimal APIs via contextBridge
+- Renderer: React + Vite for Markdown rendering and UI flows
+- Tests: Vitest + Testing Library for unit and rendering coverage
 
-3. **Phase 3: 設定画面とCSS編集**
-   - **Objective:** 設定画面でカスタムCSSを編集・保存し、即座にプレビューに反映する機能を実装
-   - **Files/Functions to Modify/Create:** src/main/main.ts, src/preload/preload.ts, src/renderer/components/Settings.ts, src/renderer/components/MarkdownViewer.ts, src/main/config.ts, tests/settings.spec.ts, tests/css-injection.spec.ts
-   - **Tests to Write:** electron-storeへのCSS保存・読み込みテスト、CSS変更時のプレビュー更新テスト、設定画面の開閉テスト
-   - **Steps:**
-        1. CSS設定の保存・読み込み・適用のテストを追加し失敗を確認
-        2. electron-storeをインストールして設定ストアを実装
-        3. IPCでメインプロセス↔レンダラー間のCSS送受信を実装
-        4. 設定画面UIを作成してカスタムCSS編集機能を追加
-        5. プレビューへのCSS適用ロジックを実装
-        6. テストが通ることを確認してLint・フォーマット実行
+### Tech Stack
+- Electron 26.x
+- Vite 5.x + React 18.x
+- TypeScript 5.x
+- DOMPurify for sanitization
+- remark/rehype plugins for GFM
+- electron-store for config persistence
+- CSS Modules for style isolation
+- Vitest + @testing-library/react
 
-4. **Phase 4: 仕上げと安定化**
-   - **Objective:** ファイル読み込みUI、エラーハンドリング、デフォルトCSS微調整、ウィンドウサイズ保存など使い勝手の向上
-   - **Files/Functions to Modify/Create:** src/renderer/components/FileLoader.ts, src/renderer/components/MarkdownViewer.ts, src/renderer/styles/default.css, src/main/main.ts, tests/file-loader.spec.ts, tests/error-handling.spec.ts
-   - **Tests to Write:** ファイル読み込みテスト、エラーハンドリングテスト、ウィンドウ状態保存テスト
-   - **Steps:**
-        1. ファイル操作とエラーハンドリングのテストを追加し失敗を確認
-        2. ファイル選択・読み込みUIと処理を実装
-        3. エラー表示とバリデーションを追加
-        4. ウィンドウサイズ・位置の保存機能を実装
-        5. デフォルトCSSを調整してGitHub風に整備
-        6. 全テストが通ることを確認してLint・フォーマット実行
+### Security Posture
+- nodeIntegration: false
+- contextIsolation: true
+- sandbox: true
+- IPC only exposed from preload
+- DOMPurify sanitizes Markdown → HTML output
+- Enforce file size/extension validation
+- Apply custom CSS through text nodes to keep style tags constrained
 
-**Open Questions 0 questions**
-（選択済み: TypeScript、Vite、electron-store）
+### Phases
+1. Phase 1: Foundation setup
+2. Phase 2: Markdown rendering
+3. Phase 3: Settings screen and CSS editor
+4. Phase 4: Polish and stabilization
+
+### Detailed Tasks
+#### Phase 1: Foundation setup
+- Bootstrap Electron + Vite project
+- Create main window with contextIsolation + preload wiring
+- Implement IPC handlers for file loading
+- Configure Vitest
+- Draft README
+
+#### Phase 2: Markdown rendering
+- Wire remark + rehype + rehype-raw + rehype-highlight
+- Sanitize with DOMPurify
+- Build the file → Markdown → HTML rendering flow
+- Enable GFM extensions (tables, task lists, fenced code blocks)
+- Add error handling plus tests
+
+#### Phase 3: Settings screen and CSS editor
+- Manage config with electron-store
+- Persist and load custom CSS
+- Build settings modal with real-time preview updates
+- Cover CSS application with tests
+
+#### Phase 4: Polish and stabilization
+- Show error dialogs and enforce file size limits
+- Persist window bounds
+- Finalize menus (Open File, Reload, etc.)
+- Update README and release notes
+- Run full regression tests
+
+### Test Plan
+- Phase 1: Foundation tests (startup, preload, IPC wiring)
+- Phase 2: Markdown rendering tests plus XSS hardening
+- Phase 3: Config persistence tests and CSS application tests
+- Phase 4: Error-handling tests and near-E2E coverage
+
+### Success Criteria
+- Reliably open Markdown files up to 10 MB
+- Render all common GFM elements (tables, lists, checkboxes)
+- Persist custom CSS that reapplies immediately and after restart
+- All tests pass in CI
+- Satisfy Electron’s security checklist
+- README and documentation available in English

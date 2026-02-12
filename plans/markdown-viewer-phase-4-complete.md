@@ -1,6 +1,6 @@
-## Phase 4 Complete: 仕上げと安定化
+## Phase 4 Complete: Polish and Stabilization
 
-ファイル読み込みUI、エラーハンドリング、ウィンドウ状態保存機能を実装しました。ユーザーフレンドリーなエラー表示、GitHub風の洗練されたUI、堅牢なファイル操作機能が完成しました。
+The file-loading UI, error handling, and window-state persistence are complete. We now have user-friendly error messaging, a refined GitHub-inspired UI, and reliable file operations.
 
 **Files created/changed:**
 - src/renderer/components/FileLoader.ts
@@ -16,15 +16,15 @@
 - tests/css-injection.spec.ts
 
 **Functions created/changed:**
-- FileLoader.selectFile() - ファイル選択ダイアログを開く
-- FileLoader.updateFileInfo() - ファイル情報を表示
-- FileLoader.extractFileName() - ファイル名を抽出
-- MarkdownViewer.showError() - エラーメッセージを表示
-- MarkdownViewer.clearError() - エラーメッセージをクリア
-- ConfigStore.getWindowState() - ウィンドウ状態を取得
-- ConfigStore.setWindowState() - ウィンドウ状態を保存
-- handleFileLoaded() - ファイル読み込みイベントを処理
-- select-file IPC handler - ファイル選択とバリデーション（サイズ制限10MB）
+- FileLoader.selectFile() - opens the file-selection dialog
+- FileLoader.updateFileInfo() - displays file info
+- FileLoader.extractFileName() - extracts file names
+- MarkdownViewer.showError() - renders error messages
+- MarkdownViewer.clearError() - clears error messages
+- ConfigStore.getWindowState() - reads saved window state
+- ConfigStore.setWindowState() - persists window state
+- handleFileLoaded() - processes file-loaded events
+- select-file IPC handler - handles file selection and validation (10 MB max)
 
 **Tests created/changed:**
 - should create FileLoader instance
@@ -39,21 +39,21 @@
 - should validate Markdown file extension
 - should validate file size
 - should handle empty files
-- should display errors in Japanese
+- should display localized error messages
 - should handle render errors
 - should set valid file size limits
 
 **Review Status:** APPROVED ★★★★★
 
 **Git Commit Message:**
-feat: ファイル読み込みとエラーハンドリングを実装
+feat: implement file loading and error handling
 
-- ファイル選択ダイアログでMarkdownファイルを読み込む機能を追加
-- ファイルサイズ制限（10MB）とバリデーションを実装
-- ユーザーフレンドリーな日本語エラーメッセージ表示
-- ウィンドウサイズ・位置の保存と復元機能を実装
-- FileLoaderコンポーネントを作成
-- MarkdownViewerにエラー表示機能を追加
-- GitHub風のUIデザインを完成
-- 18の包括的なテストケースを追加（ファイル操作、エラーハンドリング、ウィンドウ状態）
-- エラー表示のスタイリングを追加
+- Added Markdown file loading via the selection dialog
+- Enforced a 10 MB file-size limit with validation
+- Delivered user-friendly localized error messages
+- Implemented window size/position persistence
+- Created the FileLoader component
+- Added error-display capabilities to MarkdownViewer
+- Finalized the GitHub-inspired UI design
+- Added 18 comprehensive test cases (file ops, error handling, window state)
+- Styled the error display

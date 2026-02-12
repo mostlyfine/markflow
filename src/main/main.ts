@@ -14,14 +14,14 @@ const configStore = new ConfigStore();
 let initialFilePath: string | null = null;
 let currentFilePath: string | null = null;
 
-// アプリ名を設定（macOSメニューバーに表示）
+// Set the app name for the macOS menu bar
 app.name = 'MarkFlow';
 
 /**
- * メインウィンドウを作成
+ * Create the main application window.
  */
 function createWindow(): void {
-  // 保存されたウィンドウ状態を復元
+  // Restore persisted window state
   const windowState = configStore.getWindowState();
 
   mainWindow = new BrowserWindow({
@@ -38,12 +38,12 @@ function createWindow(): void {
     },
   });
 
-  // ウィンドウの最大化状態を復元
+  // Restore maximized state
   if (windowState.isMaximized) {
     mainWindow.maximize();
   }
 
-  // 開発環境かビルド後かを判定
+  // Determine whether to load from dev server or built files
   const devServerUrl = process.env.VITE_DEV_SERVER_URL;
   console.log('🔍 VITE_DEV_SERVER_URL:', devServerUrl);
   console.log('🔍 __dirname:', __dirname);
@@ -51,7 +51,7 @@ function createWindow(): void {
   if (devServerUrl) {
     console.log('📱 Loading from dev server:', devServerUrl);
     mainWindow.loadURL(devServerUrl);
-    // 開発環境でもDevToolsを自動で開かない
+    // Keep DevTools closed even in development
     // mainWindow.webContents.openDevTools();
   } else {
     const indexPath = join(__dirname, '../dist/index.html');
@@ -59,14 +59,14 @@ function createWindow(): void {
     mainWindow.loadFile(indexPath);
   }
 
-  // ウィンドウの準備ができたら、CLIから渡されたファイルを読み込む
+  // Load CLI provided file after the window finishes loading
   mainWindow.webContents.on('did-finish-load', async () => {
     if (initialFilePath && mainWindow) {
       await loadFileFromCLI(initialFilePath, mainWindow);
     }
   });
 
-  // ウィンドウ状態の保存
+  // Persist window state when it changes
   const saveWindowState = (): void => {
     if (mainWindow && !mainWindow.isDestroyed()) {
       configStore.setWindowState({
@@ -89,10 +89,10 @@ function createWindow(): void {
   });
 }
 
-// IPC通信ハンドラをセットアップ
+// Register IPC handlers for config operations
 setupConfigHandlers(ipcMain, configStore);
 
-// 外部リンクを開く
+// Open external links in the default browser
 ipcMain.handle('open-external', async (_event, url: string) => {
   try {
     await shell.openExternal(url);
@@ -103,7 +103,7 @@ ipcMain.handle('open-external', async (_event, url: string) => {
   }
 });
 
-// ファイルを再読み込み
+// Reload the currently open file
 ipcMain.handle('reload-file', async () => {
   console.log('reload-file IPC handler called');
   if (!currentFilePath) {
@@ -112,13 +112,13 @@ ipcMain.handle('reload-file', async () => {
   }
 
   try {
-    // ファイルサイズチェック (10MB制限)
+    // Enforce a 10 MB size limit
     const fs = await import('fs');
     const stats = fs.statSync(currentFilePath);
     const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
     if (stats.size > MAX_FILE_SIZE) {
-      throw new Error('ファイルサイズが大きすぎます（最大10MB）');
+      throw new Error('File is too large (max 10MB)');
     }
 
     const content = await readFile(currentFilePath, 'utf-8');
@@ -129,7 +129,7 @@ ipcMain.handle('reload-file', async () => {
   }
 });
 
-// ファイル選択ダイアログ
+// Handle manual file selection via dialog
 ipcMain.handle('select-file', async () => {
   console.log('select-file IPC handler called');
   if (!mainWindow) {
@@ -156,13 +156,13 @@ ipcMain.handle('select-file', async () => {
   const filePath = result.filePaths[0];
 
   try {
-    // ファイルサイズチェック (10MB制限)
+    // Enforce a 10 MB size limit
     const fs = await import('fs');
     const stats = fs.statSync(filePath);
     const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
     if (stats.size > MAX_FILE_SIZE) {
-      throw new Error('ファイルサイズが大きすぎます（最大10MB）');
+      throw new Error('File is too large (max 10MB)');
     }
 
     const content = await readFile(filePath, 'utf-8');
@@ -175,7 +175,7 @@ ipcMain.handle('select-file', async () => {
 });
 
 /**
- * アプリケーションメニューを設定
+ * Configure the application menu.
  */
 function setupMenu(): void {
   const menu = Menu.buildFromTemplate(
@@ -188,7 +188,7 @@ function setupMenu(): void {
 }
 
 /**
- * CLIから指定されたファイルを読み込む
+ * Load a file that was provided via the CLI.
  */
 async function loadFileFromCLI(
   filePath: string,
@@ -201,7 +201,7 @@ async function loadFileFromCLI(
     const content = await readFile(absolutePath, 'utf-8');
     currentFilePath = absolutePath;
 
-    // レンダラープロセスにファイル内容を送信
+    // Send file contents to the renderer process
     window.webContents.send('load-file-from-cli', {
       filePath: absolutePath,
       content: content,
@@ -209,17 +209,17 @@ async function loadFileFromCLI(
   } catch (error) {
     console.error('Failed to load file from CLI:', error);
     dialog.showErrorBox(
-      'ファイル読み込みエラー',
-      `ファイルを開けませんでした: ${filePath}`,
+      'File Load Error',
+      `Could not open file: ${filePath}`,
     );
   }
 }
 
 /**
- * コマンドライン引数を処理
+ * Process CLI arguments for an initial file path.
  */
 function processCommandLineArgs(): void {
-  // 引数からファイルパスを取得（最初のファイル引数を使用）
+  // Use the first file-like argument as the initial path
   const args = process.argv.slice(process.defaultApp ? 2 : 1);
   const filePath = args.find(
     (arg) =>
@@ -236,7 +236,7 @@ function processCommandLineArgs(): void {
 }
 
 /**
- * アプリケーション準備完了時の処理
+ * Initialize once the Electron app is ready.
  */
 app.whenReady().then(() => {
   processCommandLineArgs();
@@ -244,7 +244,7 @@ app.whenReady().then(() => {
   createWindow();
 
   app.on('activate', () => {
-    // macOSでDockアイコンクリック時、ウィンドウがなければ作成
+    // Re-create the window when the dock icon is clicked on macOS
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow();
     }
@@ -252,10 +252,10 @@ app.whenReady().then(() => {
 });
 
 /**
- * すべてのウィンドウが閉じられた時の処理
+ * Quit the app when every window closes (except on macOS).
  */
 app.on('window-all-closed', () => {
-  // macOS以外ではアプリを終了
+  // On non-macOS platforms, quit immediately
   if (process.platform !== 'darwin') {
     app.quit();
   }

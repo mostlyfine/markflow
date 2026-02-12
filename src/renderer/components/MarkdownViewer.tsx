@@ -45,7 +45,7 @@ const MarkdownViewer: React.FC<MarkdownViewerProps> = ({ markdown }) => {
               </code>
             );
           },
-          // 外部リンクを新しいウィンドウで開く
+          // Open external links in the user's browser
           a({ node, children, href, ...props }: any) {
             const isExternal = href?.startsWith('http://') || href?.startsWith('https://');
 

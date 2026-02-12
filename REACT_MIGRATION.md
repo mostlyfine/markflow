@@ -1,58 +1,58 @@
-# React + react-markdown構成への移行
+# Migration to React + react-markdown
 
-React、react-markdown (remark)、react-syntax-highlighterを使用する構成に変更しました。
+The renderer now uses React, react-markdown (remark), and react-syntax-highlighter.
 
-## 実装内容
+## Summary
 
-### 1. パッケージの変更
+### 1. Package changes
 
-**削除:**
+**Removed:**
 - marked
 - highlight.js
 - dompurify
 
-**追加:**
+**Added:**
 - react & react-dom
 - react-markdown
 - remark-gfm (GitHub Flavored Markdown)
 - react-syntax-highlighter
 - rehype-raw & rehype-sanitize
 
-### 2. コンポーネント構成
+### 2. Component layout
 
 ```
 src/renderer/
-├── main.tsx         # Reactエントリポイント
-├── App.tsx          # メインアプリコンポーネント
+├── main.tsx         # React entry point
+├── App.tsx          # Root component
 └── components/
-    ├── MarkdownViewer.tsx  # Markdownレンダリング
-    ├── Settings.tsx         # 設定画面
-    └── FileLoader.tsx       # ファイル読み込み
+    ├── MarkdownViewer.tsx  # Markdown rendering
+    ├── Settings.tsx        # Settings panel
+    └── FileLoader.tsx      # File picker helper
 ```
 
-### 3. 主な機能
+### 3. Key capabilities
 
-- **react-markdown**: GFM対応のMarkdownパーサー
-- **remark-gfm**: テーブル、タスクリスト、打ち消し線等のGFM拡張
-- **react-syntax-highlighter**: コードブロックのシンタックスハイライト (VS Code Dark Plusテーマ)
-- **rehype-sanitize**: XSS保護
-- **外部リンク**: デフォルトブラウザで自動的に開く
+- **react-markdown**: Markdown parser with GFM support
+- **remark-gfm**: Tables, task lists, strikethrough, etc.
+- **react-syntax-highlighter**: Code block highlighting (VS Code Dark Plus theme)
+- **rehype-sanitize**: XSS protection
+- **External links**: Automatically open in the default browser
 
-### 4. ビルド設定
+### 4. Build settings
 
-- **vite.config.ts**: @vitejs/plugin-reactを追加
-- **tsconfig.json**: jsx: "react-jsx"を設定
+- **vite.config.ts**: added `@vitejs/plugin-react`
+- **tsconfig.json**: set `"jsx": "react-jsx"`
 
-## 動作確認
+## Verification
 
 ```bash
 npm run build
 npx electron dist-electron/main.js
 ```
 
-## テスト
+## Tests
 
-既存のテストは更新が必要です。React Testing Libraryを使用したテストに書き換えることを推奨します。
+Existing tests should be updated with React Testing Library.
 
 ```bash
 npm install -D @testing-library/react @testing-library/jest-dom

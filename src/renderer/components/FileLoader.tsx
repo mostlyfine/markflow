@@ -13,13 +13,13 @@ const FileLoader: React.FC<FileLoaderProps> = ({ onFileLoad }) => {
       }
     } catch (error) {
       console.error('File loading error:', error);
-      alert('ファイルの読み込みに失敗しました');
+      alert('Failed to load the file');
     }
   };
 
   return (
     <div className="file-loader">
-      <button onClick={handleSelectFile}>ファイルを開く</button>
+      <button onClick={handleSelectFile}>Open File</button>
     </div>
   );
 };

@@ -1,85 +1,84 @@
 <div align="center">
   <img src="./logo.png" alt="MarkFlow Logo" width="200" />
 
-  # MarkFlow へようこそ 👋
+  # Welcome to MarkFlow 👋
 </div>
 
-**MarkFlow** は、GitHub Flavored Markdown に完全対応した、シンプルで高機能な Markdown ビューアです。
+**MarkFlow** is a lightweight yet capable Markdown viewer with full GitHub Flavored Markdown support.
 
-## ✨ 主な機能
+## ✨ Highlights
 
-### 📝 Markdown レンダリング
-- **GitHub Flavored Markdown (GFM)** 完全対応
-- テーブル、タスクリスト、打ち消し線などをサポート
-- 自動リンク変換
+### 📝 Markdown rendering
+- Complete **GitHub Flavored Markdown (GFM)** support
+- Tables, task lists, strikethrough, autolinks, and more
+- Automatic link detection
 
-### 🎨 シンタックスハイライト
-- 多数のプログラミング言語に対応
-- VS Code Dark Plus テーマを採用
-- コードブロックの美しい表示
+### 🎨 Syntax highlighting
+- Works with dozens of programming languages
+- Ships with the VS Code Dark Plus theme
+- Beautiful code block rendering
 
-### 📊 ダイアグラム表示
-- **Mermaid.js** によるダイアグラム描画
-  - フローチャート
-  - シーケンス図
-  - クラス図
-  - ER図
-  - ガントチャート
-  - その他多数
+### 📊 Diagram support
+- Render **Mermaid.js** diagrams:
+  - Flowcharts
+  - Sequence diagrams
+  - Class diagrams
+  - ER diagrams
+  - Gantt charts
+  - And beyond
 
-### 🧮 数式表示
-- **KaTeX** による LaTeX 数式レンダリング
-- インライン数式: $E = mc^2$
-- ブロック数式にも対応
+### 🧮 Math typesetting
+- **KaTeX**-powered LaTeX math rendering
+- Inline math examples like $E = mc^2$
+- Block equations are supported as well
 
-### ⚡️ その他の便利機能
-- ファイル再読み込み（Cmd+R / Ctrl+R）
-- ドラッグ&ドロップでファイル読み込み
-- カスタム CSS でスタイルをカスタマイズ
-- 外部リンクをデフォルトブラウザで開く
-
----
-
-## 🚀 使い方
-
-### ファイルを開く
-
-以下の3つの方法でMarkdownファイルを開けます：
-
-1. **メニューから**: `ファイル` → `ファイルを開く...` (Cmd+O)
-2. **ドラッグ&ドロップ**: Markdown ファイルをウィンドウにドロップ
-3. **コマンドライン**: `markflow ファイル名.md`
-
-### 対応ファイル形式
-
-- `.md` - Markdown
-- `.markdown` - Markdown
-- `.txt` - テキストファイル
-
-### ショートカットキー
-
-| 機能 | macOS | Windows/Linux |
-|------|-------|---------------|
-| ファイルを開く | Cmd+O | Ctrl+O |
-| ファイル再読み込み | Cmd+R | Ctrl+R |
-| 設定を開く | Cmd+, | Ctrl+, |
-| 終了 | Cmd+Q | Ctrl+Q |
+### ⚡️ Quality-of-life features
+- Reload files instantly (Cmd+R / Ctrl+R)
+- Drag-and-drop file loading
+- Customize the preview with your own CSS
+- External links open in your default browser
 
 ---
 
-## 💡 ヒント
+## 🚀 Getting Started
 
-### カスタム CSS
+### Opening files
 
-`表示` → `設定...` (Cmd+,) からカスタム CSS を設定できます。
-プレビューをお好みのスタイルにカスタマイズしましょう。
+Choose any of these three methods:
 
-### リアルタイム再読み込み
+1. **Menu**: `File` → `Open File...` (Cmd+O)
+2. **Drag & drop**: Drop a Markdown file onto the window
+3. **Command line**: `markflow path/to/file.md`
 
-外部エディタでファイルを編集中は、**Cmd+R** で即座に変更を確認できます。
+### Supported file types
+
+- `.md` — Markdown
+- `.markdown` — Markdown
+- `.txt` — Plain text
+
+### Shortcuts
+
+| Action | macOS | Windows/Linux |
+|--------|-------|---------------|
+| Open file | Cmd+O | Ctrl+O |
+| Reload file | Cmd+R | Ctrl+R |
+| Open settings | Cmd+, | Ctrl+, |
+| Quit | Cmd+Q | Ctrl+Q |
 
 ---
 
-**さっそく使ってみましょう！**
+## 💡 Tips
 
-`ファイル` → `ファイルを開く...` から Markdown ファイルを開いてください。
+### Custom CSS
+
+Open `View` → `Settings...` (Cmd+,) to edit the CSS applied to the preview and match your preferred style.
+
+### Live reload
+
+When editing the source in another editor, press **Cmd+R** to reload the file instantly.
+
+---
+
+**Ready to dive in?**
+
+Open `File` → `Open File...` and pick any Markdown file to start reading.

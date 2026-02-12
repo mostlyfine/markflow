@@ -1,6 +1,6 @@
-## Phase 3 Complete: 設定画面とCSS編集
+## Phase 3 Complete: Settings Screen and CSS Editing
 
-electron-storeで設定を永続化し、設定画面でカスタムCSSを編集・保存できるようになりました。CSS変更は即座にプレビューに反映されます。contextBridgeでセキュアにIPC通信を実装しています。
+Configuration now persists through electron-store, and the settings UI lets users edit and save custom CSS. Changes update the preview instantly, and IPC traffic stays secured through contextBridge.
 
 **Files created/changed:**
 - src/main/config.ts
@@ -16,15 +16,15 @@ electron-storeで設定を永続化し、設定画面でカスタムCSSを編集
 - tsconfig.json
 
 **Functions created/changed:**
-- ConfigStore.getCustomCSS() - カスタムCSSを取得
-- ConfigStore.setCustomCSS() - カスタムCSSを保存
-- setupConfigHandlers() - IPC通信ハンドラーをセットアップ
-- Settings.render() - 設定画面UIをレンダリング
-- Settings.saveCSS() - カスタムCSSを保存してイベント発火
-- Settings.resetCSS() - カスタムCSSをリセット
-- MarkdownViewer.applyCustomCSS() - カスタムCSSを動的に適用
-- loadAndApplyCustomCSS() - 保存されたカスタムCSSを読み込んで適用
-- toggleSettings() - 設定画面の表示/非表示を切り替え
+- ConfigStore.getCustomCSS() - retrieves the stored custom CSS
+- ConfigStore.setCustomCSS() - saves custom CSS to disk
+- setupConfigHandlers() - wires IPC handlers
+- Settings.render() - renders the settings UI
+- Settings.saveCSS() - saves custom CSS and emits events
+- Settings.resetCSS() - resets the custom CSS
+- MarkdownViewer.applyCustomCSS() - applies custom CSS dynamically
+- loadAndApplyCustomCSS() - loads saved custom CSS and applies it
+- toggleSettings() - toggles the settings modal
 
 **Tests created/changed:**
 - should create store instance
@@ -44,13 +44,13 @@ electron-storeで設定を永続化し、設定画面でカスタムCSSを編集
 **Review Status:** APPROVED ★★★★☆
 
 **Git Commit Message:**
-feat: 設定画面とCSS編集機能を実装
+feat: add settings screen and CSS editor
 
-- electron-storeでカスタムCSS設定を永続化
-- contextBridgeを使ったセキュアなIPC通信を実装
-- 設定画面でカスタムCSSを編集・保存する機能を追加
-- CSS変更の即座のプレビュー反映を実装
-- ConfigStoreクラスで設定管理を実装
-- Settingsコンポーネントで直感的なUI/UXを提供
-- 13の包括的なテストケースを追加
-- アプリレイアウトとスタイルを改善
+- Persist custom CSS with electron-store
+- Implement secure IPC via contextBridge
+- Add settings UI for editing/saving custom CSS
+- Apply CSS changes instantly in the preview
+- Manage settings through the ConfigStore class
+- Provide intuitive UX with the Settings component
+- Add 13 comprehensive test cases
+- Improve layout and styling across the app

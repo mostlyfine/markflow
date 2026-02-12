@@ -1,6 +1,6 @@
-## Phase 2 Complete: メニュー整理と設定トグル修復
+## Phase 2 Complete: Menu cleanup and settings toggle
 
-ページ再読み込みメニューを削除し、ファイル再読み込みのみをCmd/Ctrl+Rに残した上で、設定トグルIPCを確実にレンダラーへ送るようメニューを分離・整理した。macではアプリメニューに「設定…」を移し、Viewへの重複を排除。設定パネルのトグル挙動をテストで担保した。
+Removed the page-reload menu item, left Cmd/Ctrl+R dedicated to file reload, and reorganized menus to ensure the settings toggle IPC always reaches the renderer. On macOS the Settings entry now lives under the app menu, eliminating duplicates in View, and tests lock down the toggle behavior.
 
 **Files created/changed:**
 - src/main/main.ts
@@ -9,12 +9,12 @@
 - tests/settings-toggle.spec.tsx
 
 **Functions created/changed:**
-- buildMenuTemplate（プラットフォーム別メニュー分岐）
-- setupMenu（メニュー分離版の利用）
+- buildMenuTemplate (platform-specific menu branching)
+- setupMenu (wires up the split menus)
 
 **Tests created/changed:**
-- menu.spec.ts（ページ再読み込み削除、ファイル再読み込みショートカット、設定トグル送信、macのappMenuに設定を配置）
-- settings-toggle.spec.tsx（toggle-settings IPCでパネルが開閉することを検証）
+- menu.spec.ts (ensures page reload removal, file reload shortcut, settings toggle send, Settings under mac appMenu)
+- settings-toggle.spec.tsx (verifies the toggle-settings IPC opens/closes the panel)
 
 **Review Status:** APPROVED
 

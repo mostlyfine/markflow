@@ -22,41 +22,41 @@ export function buildMenuTemplate(
     template.push({
       role: 'appMenu',
       submenu: [
-        { role: 'about', label: 'MarkFlowについて' },
+        { role: 'about', label: 'About MarkFlow' },
         { type: 'separator' },
         {
-          label: '設定...',
+          label: 'Preferences...',
           accelerator: 'CmdOrCtrl+,',
           click: () => sendToRenderer('toggle-settings'),
         },
         { type: 'separator' },
-        { role: 'hide', label: 'MarkFlowを隠す' },
-        { role: 'hideOthers', label: 'ほかを隠す' },
-        { role: 'unhide', label: 'すべてを表示' },
+        { role: 'hide', label: 'Hide MarkFlow' },
+        { role: 'hideOthers', label: 'Hide Others' },
+        { role: 'unhide', label: 'Show All' },
         { type: 'separator' },
-        { role: 'quit', label: 'MarkFlow を終了' },
+        { role: 'quit', label: 'Quit MarkFlow' },
       ],
     });
   }
 
   template.push(
     {
-      label: 'ファイル',
+      label: 'File',
       submenu: [
         {
-          label: 'ファイルを開く...',
+          label: 'Open File...',
           accelerator: 'CmdOrCtrl+O',
           click: () => sendToRenderer('trigger-file-open'),
         },
         {
-          label: 'ファイルを再読み込み',
+          label: 'Reload File',
           accelerator: 'CmdOrCtrl+R',
           click: () => sendToRenderer('trigger-file-reload'),
         },
         { type: 'separator' },
         ...(!isMac
           ? [{
-            label: '終了',
+            label: 'Quit',
             accelerator: 'CmdOrCtrl+Q',
             click: () => quitApplication(),
           }]
@@ -64,33 +64,33 @@ export function buildMenuTemplate(
       ],
     },
     {
-      label: '表示',
+      label: 'View',
       submenu: [
         {
-          label: '設定...',
+          label: 'Settings...',
           accelerator: 'CmdOrCtrl+,',
           click: () => sendToRenderer('toggle-settings'),
         },
         { type: 'separator' },
-        { role: 'toggleDevTools', label: '開発者ツール' },
+        { role: 'toggleDevTools', label: 'Developer Tools' },
         { type: 'separator' },
-        { role: 'resetZoom', label: '実際のサイズ' },
-        { role: 'zoomIn', label: '拡大' },
-        { role: 'zoomOut', label: '縮小' },
+        { role: 'resetZoom', label: 'Actual Size' },
+        { role: 'zoomIn', label: 'Zoom In' },
+        { role: 'zoomOut', label: 'Zoom Out' },
         { type: 'separator' },
-        { role: 'togglefullscreen', label: 'フルスクリーン' },
+        { role: 'togglefullscreen', label: 'Full Screen' },
       ],
     },
     {
-      label: '編集',
+      label: 'Edit',
       submenu: [
-        { role: 'undo', label: '元に戻す' },
-        { role: 'redo', label: 'やり直す' },
+        { role: 'undo', label: 'Undo' },
+        { role: 'redo', label: 'Redo' },
         { type: 'separator' },
-        { role: 'cut', label: '切り取り' },
-        { role: 'copy', label: 'コピー' },
-        { role: 'paste', label: '貼り付け' },
-        { role: 'selectAll', label: 'すべて選択' },
+        { role: 'cut', label: 'Cut' },
+        { role: 'copy', label: 'Copy' },
+        { role: 'paste', label: 'Paste' },
+        { role: 'selectAll', label: 'Select All' },
       ],
     },
   );

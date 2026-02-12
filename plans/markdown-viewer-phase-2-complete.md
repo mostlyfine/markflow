@@ -1,6 +1,6 @@
-## Phase 2 Complete: GFMレンダリング
+## Phase 2 Complete: GFM Rendering
 
-marked+DOMPurifyでGFM対応のMarkdownレンダリングとプレビュー表示を実装しました。テーブル、タスクリスト、コードブロック、URL自動リンクなど主要なGFM要素に対応し、XSS対策も完備しています。GitHub風のデフォルトCSSも作成しました。
+Implemented Markdown rendering with marked + DOMPurify, delivering a full GFM preview experience. Tables, task lists, code blocks, and automatic URL linking now work, and XSS protection is in place. A GitHub-style default CSS theme ships with this phase.
 
 **Files created/changed:**
 - src/renderer/main.ts
@@ -12,11 +12,11 @@ marked+DOMPurifyでGFM対応のMarkdownレンダリングとプレビュー表�
 - tsconfig.json
 
 **Functions created/changed:**
-- renderMarkdown() - GFM対応Markdown→HTML変換とDOMPurifyによるXSS対策
-- configureMarked() - markedのGFM設定
-- getSanitizeConfig() - DOMPurifyホワイトリスト設定
-- MarkdownViewer.render() - Markdownプレビュー表示
-- MarkdownViewer.clear() - コンテンツクリア
+- renderMarkdown() - converts Markdown to HTML with GFM support and DOMPurify sanitization
+- configureMarked() - configures marked for GFM behavior
+- getSanitizeConfig() - prepares the DOMPurify whitelist
+- MarkdownViewer.render() - renders the Markdown preview
+- MarkdownViewer.clear() - clears the current content
 
 **Tests created/changed:**
 - should render headings correctly
@@ -37,12 +37,12 @@ marked+DOMPurifyでGFM対応のMarkdownレンダリングとプレビュー表�
 **Review Status:** APPROVED ✅
 
 **Git Commit Message:**
-feat: GFMレンダリングとプレビュー表示を実装
+feat: implement GFM rendering and preview
 
-- markedでGFM対応のMarkdown→HTML変換を実装
-- DOMPurifyによるXSS対策を完備
-- テーブル、タスクリスト、コードブロック、自動リンクに対応
-- MarkdownViewerコンポーネントを作成
-- GitHub風のデフォルトCSSを作成
-- 14の包括的なGFMテストケースを追加
-- 型定義エラーとLint警告を解消
+- Added marked-based Markdown → HTML conversion with GFM support
+- Completed DOMPurify-based XSS protection
+- Enabled tables, task lists, code blocks, and auto-linking
+- Created the MarkdownViewer component
+- Added a GitHub-inspired default CSS theme
+- Wrote 14 comprehensive GFM test cases
+- Resolved typing errors and lint warnings

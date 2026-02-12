@@ -1,12 +1,12 @@
-## Plan Complete: macOS向けMarkdownビューア
+## Plan Complete: Markdown Viewer for macOS
 
-ElectronとViteでGFM対応のMarkdownビューアを完成させました。セキュアなpreloadブリッジ、カスタムCSS編集、ファイル読み込み、エラーハンドリング、ウィンドウ状態保存など、実用的な機能を全て実装しました。TDDに従った高品質な実装で、本番環境にデプロイ可能な状態です。
+We delivered a GFM-capable Markdown viewer using Electron and Vite. Secure preload bridges, custom CSS editing, file loading, error handling, window-state persistence, and more are all in place. The implementation follows TDD and is production-ready.
 
 **Phases Completed:** 4 of 4
-1. ✅ Phase 1: 基盤セットアップ
-2. ✅ Phase 2: GFMレンダリング
-3. ✅ Phase 3: 設定画面とCSS編集
-4. ✅ Phase 4: 仕上げと安定化
+1. ✅ Phase 1: Foundation setup
+2. ✅ Phase 2: GFM rendering
+3. ✅ Phase 3: Settings screen and CSS editing
+4. ✅ Phase 4: Polish and stabilization
 
 **All Files Created/Modified:**
 - package.json
@@ -34,57 +34,57 @@ ElectronとViteでGFM対応のMarkdownビューアを完成させました。セ
 - tests/error-handling.spec.ts
 
 **Key Functions/Classes Added:**
-- createWindow() - Electronメインウィンドウ作成とセキュリティ設定
-- ConfigStore - electron-storeでの設定管理（カスタムCSS、ウィンドウ状態）
-- renderMarkdown() - GFM対応Markdown→HTML変換（DOMPurifyでXSS対策）
-- MarkdownViewer - プレビュー表示、CSS適用、エラー表示
-- Settings - カスタムCSS編集UI
-- FileLoader - ファイル選択とバリデーション
-- setupConfigHandlers() - セキュアなIPC通信ハンドラー
+- createWindow() - builds the Electron main window with security defaults
+- ConfigStore - manages settings with electron-store (custom CSS, window state)
+- renderMarkdown() - converts Markdown → HTML with DOMPurify-based protection
+- MarkdownViewer - handles preview rendering, CSS application, and errors
+- Settings - UI for editing custom CSS
+- FileLoader - validates and loads Markdown files
+- setupConfigHandlers() - registers secure IPC handlers
 
 **Test Coverage:**
 - Total tests written: 49
 - All tests passing: ✅
 
-**テストファイル別:**
-- app.spec.ts: 4テスト（基盤）
-- markdown.spec.ts: 14テスト（GFMレンダリング、XSS対策）
-- settings.spec.ts: 5テスト（設定保存・読み込み）
-- css-injection.spec.ts: 8テスト（CSS適用、UI操作）
-- file-loader.spec.ts: 9テスト（ファイル読み込み）
-- error-handling.spec.ts: 9テスト（エラーハンドリング、バリデーション）
+**Tests by File:**
+- app.spec.ts: 4 tests (foundation)
+- markdown.spec.ts: 14 tests (GFM rendering, XSS)
+- settings.spec.ts: 5 tests (config persistence)
+- css-injection.spec.ts: 8 tests (CSS application, UI)
+- file-loader.spec.ts: 9 tests (file loading)
+- error-handling.spec.ts: 9 tests (error handling, validation)
 
-**主な機能:**
-- ✅ GFM対応Markdownレンダリング（テーブル、タスクリスト、コードブロック、自動リンク）
-- ✅ XSS対策（DOMPurifyによるHTMLサニタイズ）
-- ✅ カスタムCSS編集と即座のプレビュー反映
-- ✅ 設定の永続化（electron-store）
-- ✅ ファイル選択とバリデーション（サイズ制限10MB）
-- ✅ ユーザーフレンドリーな日本語エラーメッセージ
-- ✅ ウィンドウサイズ・位置の保存と復元
-- ✅ セキュアなIPC通信（contextBridge）
-- ✅ GitHub風の洗練されたUI
+**Key Features:**
+- ✅ GFM Markdown rendering (tables, task lists, code blocks, automatic links)
+- ✅ DOMPurify-based XSS protection
+- ✅ Custom CSS editor with instant preview updates
+- ✅ Persistent settings via electron-store
+- ✅ File selection/validation with a 10 MB limit
+- ✅ User-friendly localized error messages
+- ✅ Window size/position persistence
+- ✅ Secure IPC bridges (contextBridge)
+- ✅ GitHub-inspired UI polish
 
-**セキュリティ:**
+**Security:**
 - nodeIntegration: false
 - contextIsolation: true
 - sandbox: true
-- contextBridgeによる最小限のAPI公開
-- DOMPurifyによるXSS対策
-- ファイルサイズ制限（10MB）
+- Minimal APIs exposed through contextBridge
+- DOMPurify sanitization
+- 10 MB file-size cap
 
-**コード品質:**
-- TypeScript strictモード
-- ESLint/Prettier設定完備
-- Clean Code原則に準拠
-- TDD（テスト駆動開発）完全遵守
-- SOLID原則の遵守
+**Code Quality:**
+- TypeScript strict mode
+- ESLint/Prettier configuration in place
+- Clean Code principles
+- Full TDD workflow
+- SOLID adherence
 
 **Recommendations for Next Steps:**
-- シンタックスハイライトの追加（highlight.jsやprism.js）
-- ダーク/ライトテーマのプリセット
-- CSSエディタのシンタックスハイライト
-- Undo/Redo機能
-- キーボードショートカット（Ctrl+S保存など）
-- E2Eテストの追加（Playwright）
-- macOSアプリとしてのパッケージング
+- Add syntax highlighting (highlight.js or prism.js)
+- Offer dark/light theme presets
+- Provide syntax highlighting in the CSS editor
+- Add undo/redo
+- Implement keyboard shortcuts (e.g., Cmd/Ctrl+S to save)
+- Add E2E tests (Playwright)
+- Package and notarize the macOS app

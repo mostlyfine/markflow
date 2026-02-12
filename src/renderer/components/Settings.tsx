@@ -28,28 +28,26 @@ const Settings: React.FC<SettingsProps> = ({ onClose, onCSSUpdate }) => {
       const success = await window.electronAPI.setCustomCSS(css);
       if (success) {
         onCSSUpdate(css);
-        alert('設定を保存しました');
-      } else {
-        alert('設定の保存に失敗しました');
       }
     } catch (error) {
       console.error('Failed to save CSS:', error);
-      alert('設定の保存に失敗しました');
+      alert('Failed to save settings');
     } finally {
       setIsSaving(false);
     }
+    onClose();
   };
 
   return (
     <div id="settings-panel" className="settings-panel">
       <div className="settings-header">
-        <h2>設定</h2>
+        <h2>Settings</h2>
       </div>
 
-      <p>Markdownビューアに適用するカスタムCSSを編集できます。</p>
+      <p>Edit the custom CSS applied to the Markdown preview.</p>
 
       <div className="settings-section">
-        <h3>カスタムCSS</h3>
+        <h3>Custom CSS</h3>
         <textarea
           value={css}
           onChange={(e) => setCSS(e.target.value)}
@@ -68,10 +66,10 @@ body {
           onClick={handleSave}
           disabled={isSaving}
         >
-          {isSaving ? '保存中...' : '保存'}
+          {isSaving ? 'Saving...' : 'Save'}
         </button>
         <button className="btn-close" onClick={onClose}>
-          閉じる
+          Close
         </button>
       </div>
     </div>

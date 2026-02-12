@@ -2,7 +2,7 @@ import Store from 'electron-store';
 import { IpcMain } from 'electron';
 
 /**
- * 設定データのスキーマ
+ * Schema for persisted configuration data.
  */
 interface ConfigSchema {
   customCSS: string;
@@ -10,7 +10,7 @@ interface ConfigSchema {
 }
 
 /**
- * ウィンドウの状態
+ * Window state persisted between sessions.
  */
 interface WindowState {
   width: number;
@@ -26,8 +26,7 @@ type ElectronStore<T> = {
 };
 
 /**
- * 設定ストア
- * electron-storeを使用して設定を永続化
+ * Wrapper around electron-store for MarkFlow settings.
  */
 export class ConfigStore {
   private store: ElectronStore<ConfigSchema> & Store<ConfigSchema>;
@@ -49,28 +48,28 @@ export class ConfigStore {
   }
 
   /**
-   * カスタムCSSを取得
+   * Retrieve persisted custom CSS.
    */
   getCustomCSS(): string {
     return this.store.get('customCSS');
   }
 
   /**
-   * ウィンドウ状態を取得
+   * Get the last saved window state.
    */
   getWindowState(): WindowState {
     return this.store.get('windowState');
   }
 
   /**
-   * ウィンドウ状態を保存
+   * Persist the current window state.
    */
   setWindowState(state: WindowState): void {
     this.store.set('windowState', state);
   }
 
   /**
-   * カスタムCSSを保存
+   * Persist custom CSS entered by the user.
    */
   setCustomCSS(css: string): void {
     this.store.set('customCSS', css);
@@ -78,18 +77,18 @@ export class ConfigStore {
 }
 
 /**
- * IPC通信ハンドラをセットアップ
+ * Register IPC handlers for retrieving and storing config.
  */
 export function setupConfigHandlers(
   ipcMain: IpcMain,
   configStore: ConfigStore
 ): void {
-  // カスタムCSSを取得
+  // Retrieve custom CSS when requested
   ipcMain.handle('get-custom-css', async () => {
     return configStore.getCustomCSS();
   });
 
-  // カスタムCSSを保存
+  // Persist new CSS provided by the renderer
   ipcMain.handle('set-custom-css', async (_event, css: string) => {
     configStore.setCustomCSS(css);
     return true;

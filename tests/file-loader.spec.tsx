@@ -97,6 +97,6 @@ describe('FileLoader component', () => {
     });
 
     expect(selectFile).toHaveBeenCalled();
-    expect(alertSpy).toHaveBeenCalledWith('ファイルの読み込みに失敗しました');
+    expect(alertSpy).toHaveBeenCalledWith('Failed to load the file');
   });
 });

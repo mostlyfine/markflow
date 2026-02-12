@@ -69,7 +69,7 @@ describe('Error handling', () => {
       appContainer?.dispatchEvent(dropEvent);
     });
 
-    expect(alertSpy).toHaveBeenCalledWith('Markdownファイルを選択してください');
+    expect(alertSpy).toHaveBeenCalledWith('Please select a Markdown file');
   });
 
   it('alerts when saving CSS fails in Settings', async () => {
@@ -95,7 +95,7 @@ describe('Error handling', () => {
 
     const textarea = container.querySelector('textarea');
     const saveButton = Array.from(container.querySelectorAll('button')).find((button) =>
-      button.textContent?.includes('保存')
+      button.textContent?.includes('Save')
     );
 
     await act(async () => { await Promise.resolve(); });
@@ -107,6 +107,6 @@ describe('Error handling', () => {
 
     expect(setCustomCSS).toHaveBeenCalledWith(cssValue);
     expect(onCSSUpdate).not.toHaveBeenCalled();
-    expect(alertSpy).toHaveBeenCalledWith('設定の保存に失敗しました');
+    expect(alertSpy).toHaveBeenCalledWith('Failed to save settings');
   });
 });

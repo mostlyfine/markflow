@@ -1,6 +1,6 @@
-## Phase 1 Complete: 基盤セットアップ
+## Phase 1 Complete: Foundation Setup
 
-Electron+Vite+TypeScript+Vitestの基盤を構築し、セキュアなpreloadスクリプトとメインプロセス・レンダラープロセスの最小実装を完了しました。アプリが起動し、全テストが合格しています。
+We built the Electron + Vite + TypeScript + Vitest foundation, delivered a secure preload script, and finished the minimum main/renderer implementations. The application launches successfully and all tests pass.
 
 **Files created/changed:**
 - package.json
@@ -17,9 +17,9 @@ Electron+Vite+TypeScript+Vitestの基盤を構築し、セキュアなpreloadス
 - README.md
 
 **Functions created/changed:**
-- createWindow() - Electronメインウィンドウ作成
-- initializeRenderer() - レンダラープロセス初期化
-- contextBridge.exposeInMainWorld() - セキュアなAPI公開
+- createWindow() - creates the Electron main window
+- initializeRenderer() - initializes the renderer process
+- contextBridge.exposeInMainWorld() - securely exposes APIs
 
 **Tests created/changed:**
 - should start the application
@@ -30,10 +30,10 @@ Electron+Vite+TypeScript+Vitestの基盤を構築し、セキュアなpreloadス
 **Review Status:** APPROVED ★★★★☆
 
 **Git Commit Message:**
-feat: Electron+Vite基盤セットアップ
+feat: Electron+Vite foundation setup
 
-- Electron、Vite、TypeScript、Vitestのプロジェクト構成を作成
-- セキュアなpreloadスクリプトでcontextBridgeを実装
-- メインプロセスとレンダラープロセスの最小実装を追加
-- 基本的なアプリ起動とレンダラー初期化のテストを追加
-- ESLint、Prettier、TypeScriptの設定を完了
+- Created the project structure for Electron, Vite, TypeScript, and Vitest
+- Implemented contextBridge in a secure preload script
+- Added the minimum viable main and renderer processes
+- Added basic startup and renderer initialization tests
+- Completed ESLint, Prettier, and TypeScript configurations

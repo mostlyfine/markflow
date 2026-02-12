@@ -1,15 +1,16 @@
-# リリース手順
+# Release Guide
 
-## 1. バージョンの更新
+## 1. Bump the version
 
-package.jsonのversionフィールドを更新:
+Update the `version` field in `package.json`:
+
 ```json
 {
   "version": "1.0.0"
 }
 ```
 
-## 2. 変更をコミット
+## 2. Commit and push
 
 ```bash
 git add package.json
@@ -17,45 +18,45 @@ git commit -m "chore: bump version to 1.0.0"
 git push origin main
 ```
 
-## 3. タグを作成してプッシュ
+## 3. Tag the release
 
 ```bash
 git tag v1.0.0
 git push origin v1.0.0
 ```
 
-## 4. GitHub Actionsの確認
+## 4. Monitor GitHub Actions
 
-- GitHubリポジトリの「Actions」タブで進行状況を確認
-- ビルドが完了すると、「Releases」に自動的に公開される
+- Check progress under the **Actions** tab.
+- Once the workflow succeeds, artifacts are attached to the **Releases** page automatically.
 
-## 5. リリースノートの編集（任意）
+## 5. (Optional) Edit release notes
 
-- GitHubの「Releases」ページでリリースを開く
-- 自動生成されたリリースノートを必要に応じて編集
+- Open the new entry on the **Releases** page.
+- Tweak the auto-generated notes if needed.
 
-## トラブルシューティング
+## Troubleshooting
 
-### ビルドが失敗する場合
+### Build failures
 
-1. ローカルでビルドを試す:
+1. Try building locally:
+
 ```bash
 npm run dist
 ```
 
-2. package.jsonの設定を確認
+2. Verify `package.json` settings.
+3. Inspect GitHub Actions logs.
 
-3. GitHub Actionsのログを確認
+### macOS code signing
 
-### macOSのコード署名
+The workflow currently skips signing via `CSC_IDENTITY_AUTO_DISCOVERY=false`.
+To enable signing, provide these GitHub Secrets:
+- `CSC_LINK`: Base64-encoded certificate file
+- `CSC_KEY_PASSWORD`: Certificate password
 
-コード署名なしでビルドするため、`CSC_IDENTITY_AUTO_DISCOVERY: false`を設定済み。
-署名が必要な場合は、以下のGitHub Secretsを追加:
-- `CSC_LINK`: 証明書ファイル（base64エンコード）
-- `CSC_KEY_PASSWORD`: 証明書のパスワード
+### Windows code signing
 
-### Windowsのコード署名
-
-署名が必要な場合は、以下のGitHub Secretsを追加:
-- `CSC_LINK`: 証明書ファイル（base64エンコード）
-- `CSC_KEY_PASSWORD`: 証明書のパスワード
+Provide the following secrets if you need signed Windows binaries:
+- `CSC_LINK`: Base64-encoded certificate file
+- `CSC_KEY_PASSWORD`: Certificate password

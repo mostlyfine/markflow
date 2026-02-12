@@ -1,11 +1,10 @@
 import { contextBridge, ipcRenderer } from 'electron';
 
 /**
- * セキュアなpreloadスクリプト
- * contextBridgeを使用してレンダラープロセスに安全にAPIを公開
+ * Secure preload script that exposes a minimal API via contextBridge.
  */
 
-// 現時点では最小限のAPIのみ公開
+// Expose only the APIs the renderer needs
 contextBridge.exposeInMainWorld('electronAPI', {
   platform: process.platform,
   versions: {
@@ -13,37 +12,37 @@ contextBridge.exposeInMainWorld('electronAPI', {
     chrome: process.versions.chrome,
     electron: process.versions.electron,
   },
-  // 設定API
+  // Settings API
   getCustomCSS: (): Promise<string> => ipcRenderer.invoke('get-custom-css'),
   setCustomCSS: (css: string): Promise<boolean> =>
     ipcRenderer.invoke('set-custom-css', css),
-  // ファイル読み込みAPI
+  // File loading API
   selectFile: (): Promise<{ filePath: string; content: string } | null> =>
     ipcRenderer.invoke('select-file'),
   reloadFile: (): Promise<{ filePath: string; content: string } | null> =>
     ipcRenderer.invoke('reload-file'),
-  // メニューからのファイルを開くイベント
+  // Menu-driven file open event
   onFileOpen: (callback: () => void) => {
     ipcRenderer.on('trigger-file-open', callback);
     return () => {
       ipcRenderer.removeListener('trigger-file-open', callback);
     };
   },
-  // メニューからのファイル再読み込みイベント
+  // Menu-driven reload event
   onFileReload: (callback: () => void) => {
     ipcRenderer.on('trigger-file-reload', callback);
     return () => {
       ipcRenderer.removeListener('trigger-file-reload', callback);
     };
   },
-  // メニューからの設定画面トグルイベント
+  // Toggle settings panel from the menu
   onToggleSettings: (callback: () => void) => {
     ipcRenderer.on('toggle-settings', callback);
     return () => {
       ipcRenderer.removeListener('toggle-settings', callback);
     };
   },
-  // CLIから渡されたファイルを開くイベント
+  // File open event triggered via CLI arguments
   onFileOpenFromCLI: (
     callback: (data: { filePath: string; content: string }) => void
   ) => {
@@ -56,12 +55,12 @@ contextBridge.exposeInMainWorld('electronAPI', {
       ipcRenderer.removeListener('load-file-from-cli', handler);
     };
   },
-  // 外部リンクを開く
+  // Open external URLs
   openExternal: (url: string): Promise<boolean> =>
     ipcRenderer.invoke('open-external', url),
 });
 
-// TypeScript型定義（レンダラー側で使用）
+// TypeScript contract for renderer usage
 export interface ElectronAPI {
   platform: string;
   versions: {

@@ -1,11 +1,10 @@
 import { describe, it, expect, vi } from 'vitest';
 
 /**
- * 設定管理機能のテスト
- * CSS設定の保存・読み込み・適用をテスト
+ * Tests for configuration management and CSS persistence.
  */
 
-// electron-store をモック
+// Mock electron-store
 vi.mock('electron-store', () => {
   let mockData: Record<string, unknown> = {};
 
@@ -39,7 +38,7 @@ vi.mock('electron-store', () => {
 describe('Settings Management', () => {
   describe('Config Store', () => {
     it('should save custom CSS to store', async () => {
-      // テストが実装を駆動する
+      // Ensure tests drive the implementation
       const { ConfigStore } = await import('../src/main/config');
       const store = new ConfigStore();
 
@@ -63,7 +62,7 @@ describe('Settings Management', () => {
 
       store1.setCustomCSS(customCSS);
 
-      // 同じインスタンスで値が保存されたことを確認
+      // Confirm values persist within the same instance
       expect(store1.getCustomCSS()).toBe(customCSS);
     });
   });
@@ -86,13 +85,13 @@ describe('Settings Management', () => {
 
       setupConfigHandlers(mockIpcMain as never, mockStore as never);
 
-      // 'get-custom-css' ハンドラが登録されているか確認
+      // Ensure the handler is registered
       expect(mockIpcMain.handle).toHaveBeenCalledWith(
         'get-custom-css',
         expect.any(Function)
       );
 
-      // ハンドラを実行してみる
+      // Execute the handler
       const result = await handlers['get-custom-css']();
       expect(result).toBe('body { color: red; }');
       expect(mockStore.getCustomCSS).toHaveBeenCalled();
@@ -115,13 +114,13 @@ describe('Settings Management', () => {
 
       setupConfigHandlers(mockIpcMain as never, mockStore as never);
 
-      // 'set-custom-css' ハンドラが登録されているか確認
+      // Ensure the handler is registered
       expect(mockIpcMain.handle).toHaveBeenCalledWith(
         'set-custom-css',
         expect.any(Function)
       );
 
-      // ハンドラを実行してみる
+      // Execute the handler
       const testCSS = 'body { background: blue; }';
       const result = await handlers['set-custom-css'](null, testCSS);
       expect(result).toBe(true);

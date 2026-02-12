@@ -54,13 +54,13 @@ export function buildMenuTemplate(
           click: () => sendToRenderer('trigger-file-reload'),
         },
         { type: 'separator' },
-        !isMac
-          ? {
+        ...(!isMac
+          ? [{
             label: '終了',
             accelerator: 'CmdOrCtrl+Q',
             click: () => quitApplication(),
-          }
-          : undefined,
+          }]
+          : []),
       ],
     },
     {

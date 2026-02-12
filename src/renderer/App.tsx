@@ -217,7 +217,7 @@ const App: React.FC = () => {
       onDrop={handleDrop}
       onDragOver={handleDragOver}
     >
-      <style>{customCSS}</style>
+      <style>{!showSettings ? customCSS : ''}</style>
 
       {showSettings ? (
         <Settings

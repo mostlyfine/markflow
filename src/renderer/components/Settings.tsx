@@ -53,7 +53,11 @@ const Settings: React.FC<SettingsProps> = ({ onClose, onCSSUpdate }) => {
         <textarea
           value={css}
           onChange={(e) => setCSS(e.target.value)}
-          placeholder="カスタムCSSを入力してください..."
+          placeholder="// Custom css example:
+body {
+  font-size: 16px;
+  background-color: #f0f0f0;
+}"
           rows={20}
         />
       </div>

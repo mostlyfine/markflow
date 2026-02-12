@@ -14,3 +14,6 @@ coverage
 *.old
 *.backup
 build/icon.iconset
+
+# Worktrees
+.worktrees/

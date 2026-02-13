@@ -24,7 +24,7 @@
     "electron",
     "gfm"
   ],
-  "author": "",
+  "author": "mostlyfine <mostlyfine@gmail.com>",
   "license": "MIT",
   "devDependencies": {
     "@types/jsdom": "^27.0.0",

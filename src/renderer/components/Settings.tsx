@@ -44,8 +44,6 @@ const Settings: React.FC<SettingsProps> = ({ onClose, onCSSUpdate }) => {
         <h2>Settings</h2>
       </div>
 
-      <p>Edit the custom CSS applied to the Markdown preview.</p>
-
       <div className="settings-section">
         <h3>Custom CSS</h3>
         <textarea

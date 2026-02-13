@@ -5,8 +5,8 @@ Electron-based Markdown viewer with first-class GitHub Flavored Markdown (GFM) s
 ## Features
 
 - ✅ Full GitHub Flavored Markdown (GFM) support
-- ✅ Syntax highlighting (react-syntax-highlighter + Prism)
-- ✅ LaTeX math rendering with KaTeX
+- ❌ Syntax highlighting (disabled for faster startup)
+- ❌ LaTeX math rendering with KaTeX (disabled for faster startup)
 - ✅ Mermaid diagram rendering
 - ✅ External links open in the default browser
 - ✅ Launch with files specified via the CLI
@@ -116,8 +116,8 @@ markflow/
 - **Build tool**: Vite 5 + vite-plugin-electron
 - **Packager**: electron-builder 24
 - **Markdown**: react-markdown + remark-gfm
-- **Syntax highlighting**: react-syntax-highlighter (Prism)
-- **Math**: KaTeX
+- **Syntax highlighting**: disabled
+- **Math**: disabled
 - **Diagrams**: Mermaid.js
 - **Language**: TypeScript 5
 - **Tests**: Vitest

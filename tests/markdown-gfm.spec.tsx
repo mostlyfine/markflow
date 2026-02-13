@@ -43,33 +43,42 @@ describe('MarkdownViewer GFM rendering', () => {
     });
 
     expect(container.querySelector('table')).toBeTruthy();
-    expect(container.querySelectorAll('input[type="checkbox"]')).toHaveLength(2);
+    expect(container.querySelectorAll('input[type="checkbox"]')).toHaveLength(
+      2
+    );
     expect(container.querySelector('del')?.textContent).toBe('done');
   });
 
-  it('renders syntax highlighting and math via KaTeX', async () => {
-    const markdown = `Inline math $E=mc^2$.
-
-\`\`\`javascript
-const answer = 42;
-\`\`\``;
+  it('renders code blocks without syntax highlighting', async () => {
+    const markdown = '```javascript\nconst answer = 42;\n```';
 
     await act(async () => {
       root.render(<MarkdownViewer markdown={markdown} />);
     });
 
-    expect(container.querySelector('.katex')).toBeTruthy();
-    expect(container.querySelector('code.language-javascript')).toBeTruthy();
+    const pre = container.querySelector('pre');
+    expect(pre).toBeTruthy();
+    expect(pre?.getAttribute('style')).toBeNull();
+    expect(pre?.querySelector('[style]')).toBeNull();
+    expect(container.querySelector('pre code')?.textContent).toContain(
+      'const answer = 42;'
+    );
   });
 
   it('delegates external links to electronAPI.openExternal', async () => {
     const openExternal = vi.fn();
-    (window as unknown as { electronAPI: { openExternal: typeof openExternal } }).electronAPI = {
+    (
+      window as unknown as {
+        electronAPI: { openExternal: typeof openExternal };
+      }
+    ).electronAPI = {
       openExternal,
     };
 
     await act(async () => {
-      root.render(<MarkdownViewer markdown={'[External](https://example.com)'} />);
+      root.render(
+        <MarkdownViewer markdown={'[External](https://example.com)'} />
+      );
     });
 
     const anchor = container.querySelector('a');

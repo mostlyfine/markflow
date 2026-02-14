@@ -54,6 +54,21 @@ npm run format
 npm run clean
 ```
 
+## Homebrew (macOS)
+
+### Install from tap
+
+```bash
+brew tap mostlyfine/markflow
+brew install --cask markflow
+```
+
+If another cask with the same name exists locally, use the fully qualified name:
+
+```bash
+brew install --cask mostlyfine/markflow/markflow
+```
+
 ## Release
 
 ### Automated release via GitHub Actions
@@ -75,6 +90,17 @@ git push origin v1.0.0
 ### Manual release
 
 You can also trigger the "Build and Release" workflow manually from GitHub Actions.
+
+### Update Homebrew cask
+
+After generating macOS ZIP artifacts (`arm64` and `x64`), update the cask:
+
+```bash
+./scripts/update-homebrew-cask.sh 0.1.0
+git add Casks/markflow.rb
+git commit -m "chore: update Homebrew cask for v0.1.0"
+git push origin main
+```
 
 ## Project Structure
 

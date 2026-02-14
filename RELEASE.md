@@ -30,7 +30,24 @@ git push origin v1.0.0
 - Check progress under the **Actions** tab.
 - Once the workflow succeeds, artifacts are attached to the **Releases** page automatically.
 
-## 5. (Optional) Edit release notes
+## 5. Update Homebrew cask (macOS)
+
+1. Build macOS artifacts locally (or download them from the release):
+
+```bash
+npm run dist:mac
+```
+
+2. Update `Casks/markflow.rb`:
+
+```bash
+./scripts/update-homebrew-cask.sh 1.0.0
+git add Casks/markflow.rb
+git commit -m "chore: update Homebrew cask for v1.0.0"
+git push origin main
+```
+
+## 6. (Optional) Edit release notes
 
 - Open the new entry on the **Releases** page.
 - Tweak the auto-generated notes if needed.

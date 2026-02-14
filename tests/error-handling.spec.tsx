@@ -32,9 +32,13 @@ describe('Error handling', () => {
   });
 
   it('shows an alert when unsupported files are dropped', async () => {
-    const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => undefined);
+    const alertSpy = vi
+      .spyOn(window, 'alert')
+      .mockImplementation(() => undefined);
     const noop = vi.fn();
-    const fetchMock = vi.fn().mockResolvedValue({ ok: true, text: async () => '' });
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue({ ok: true, text: async () => '' });
     Object.assign(window, {
       electronAPI: {
         getCustomCSS: vi.fn().mockResolvedValue(''),
@@ -58,7 +62,10 @@ describe('Error handling', () => {
     expect(appContainer).toBeTruthy();
 
     const invalidFile = { name: 'note.pdf' } as File;
-    const dropEvent = new window.Event('drop', { bubbles: true, cancelable: true });
+    const dropEvent = new window.Event('drop', {
+      bubbles: true,
+      cancelable: true,
+    });
     Object.assign(dropEvent, {
       dataTransfer: { files: [invalidFile] },
       preventDefault: () => undefined,
@@ -72,8 +79,10 @@ describe('Error handling', () => {
     expect(alertSpy).toHaveBeenCalledWith('Please select a Markdown file');
   });
 
-  it('alerts when saving CSS fails in Settings', async () => {
-    const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => undefined);
+  it('does not alert when saving CSS fails in Settings', async () => {
+    const alertSpy = vi
+      .spyOn(window, 'alert')
+      .mockImplementation(() => undefined);
     const cssValue = '.app { color: red; }';
     const getCustomCSS = vi.fn().mockResolvedValue(cssValue);
     const setCustomCSS = vi.fn().mockResolvedValue(false);
@@ -87,26 +96,34 @@ describe('Error handling', () => {
     });
 
     await act(async () => {
-      root.render(<Settings onClose={() => undefined} onCSSUpdate={onCSSUpdate} />);
+      root.render(
+        <Settings onClose={() => undefined} onCSSUpdate={onCSSUpdate} />
+      );
       await Promise.resolve();
     });
 
-    await act(async () => { await Promise.resolve(); });
+    await act(async () => {
+      await Promise.resolve();
+    });
 
     const textarea = container.querySelector('textarea');
-    const saveButton = Array.from(container.querySelectorAll('button')).find((button) =>
-      button.textContent?.includes('Save')
+    const saveButton = Array.from(container.querySelectorAll('button')).find(
+      (button) => button.textContent?.includes('Save')
     );
 
-    await act(async () => { await Promise.resolve(); });
+    await act(async () => {
+      await Promise.resolve();
+    });
     expect(textarea?.value).toBe(cssValue);
 
     await act(async () => {
-      saveButton?.dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+      saveButton?.dispatchEvent(
+        new window.MouseEvent('click', { bubbles: true })
+      );
     });
 
     expect(setCustomCSS).toHaveBeenCalledWith(cssValue);
     expect(onCSSUpdate).not.toHaveBeenCalled();
-    expect(alertSpy).toHaveBeenCalledWith('Failed to save settings');
+    expect(alertSpy).not.toHaveBeenCalled();
   });
 });

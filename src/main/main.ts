@@ -29,7 +29,7 @@ function createWindow(): void {
     height: windowState.height,
     x: windowState.x,
     y: windowState.y,
-    icon: join(__dirname, '../../build/icon.png'),
+    icon: join(__dirname, '../../public/icon.png'),
     webPreferences: {
       preload: join(__dirname, 'preload.mjs'),
       nodeIntegration: false,

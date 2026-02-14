@@ -1,8 +1,4 @@
-<div align="center">
-  <img src="./logo.png" alt="MarkFlow Logo" width="200" />
-
-  # Welcome to MarkFlow 👋
-</div>
+# Welcome to MarkFlow 👋
 
 **MarkFlow** is a lightweight yet capable Markdown viewer with full GitHub Flavored Markdown support.
 
@@ -13,11 +9,6 @@
 - Tables, task lists, strikethrough, autolinks, and more
 - Automatic link detection
 
-### 🎨 Syntax highlighting
-- Works with dozens of programming languages
-- Ships with the VS Code Dark Plus theme
-- Beautiful code block rendering
-
 ### 📊 Diagram support
 - Render **Mermaid.js** diagrams:
   - Flowcharts
@@ -27,16 +18,37 @@
   - Gantt charts
   - And beyond
 
-### 🧮 Math typesetting
-- **KaTeX**-powered LaTeX math rendering
-- Inline math examples like $E = mc^2$
-- Block equations are supported as well
-
 ### ⚡️ Quality-of-life features
 - Reload files instantly (Cmd+R / Ctrl+R)
 - Drag-and-drop file loading
 - Customize the preview with your own CSS
 - External links open in your default browser
+
+---
+
+## 📚 GFM notation examples
+
+### Task list
+
+- [x] Completed item
+- [ ] Incomplete item
+
+### Strikethrough and inline code
+
+- ~~Deprecated text~~
+- Use `npm test` to run tests
+
+### Blockquote
+
+> This is a GFM-style blockquote.
+
+### Table
+
+| Feature | Status |
+|---------|--------|
+| Tables | ✅ |
+| Task lists | ✅ |
+| Strikethrough | ✅ |
 
 ---
 

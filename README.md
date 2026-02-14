@@ -83,9 +83,11 @@ markflow/
 ├── .github/
 │   └── workflows/
 │       └── release.yml     # GitHub Actions workflow
-├── build/                  # Icons and other build assets
-├── public/                 # Static assets (welcome copy, sample markdown)
-│   └── gfm.md
+├── public/                 # Static assets (welcome copy, icons)
+│   ├── icon.icns
+│   ├── icon.ico
+│   ├── icon.png
+│   └── welcome.md
 ├── src/
 │   ├── main/               # Electron main process
 │   │   ├── main.ts

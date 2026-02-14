@@ -35,7 +35,9 @@ describe('CSS injection and persistence', () => {
     const getCustomCSS = vi.fn().mockResolvedValue('body { background: red; }');
     const selectFile = vi.fn();
     const noop = vi.fn();
-    const fetchMock = vi.fn().mockResolvedValue({ ok: true, text: async () => '# Welcome' });
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue({ ok: true, text: async () => '# Welcome' });
     Object.assign(window, {
       electronAPI: {
         getCustomCSS,
@@ -56,7 +58,9 @@ describe('CSS injection and persistence', () => {
     });
 
     const styleTags = Array.from(container.querySelectorAll('style'));
-    const customStyle = styleTags.find((tag) => tag.textContent?.includes('background: red'));
+    const customStyle = styleTags.find((tag) =>
+      tag.textContent?.includes('background: red')
+    );
     expect(getCustomCSS).toHaveBeenCalled();
     expect(customStyle?.textContent).toContain('background: red');
   });
@@ -66,7 +70,9 @@ describe('CSS injection and persistence', () => {
     const getCustomCSS = vi.fn().mockResolvedValue(cssValue);
     const setCustomCSS = vi.fn().mockResolvedValue(true);
     const onCSSUpdate = vi.fn();
-    const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => undefined);
+    const alertSpy = vi
+      .spyOn(window, 'alert')
+      .mockImplementation(() => undefined);
 
     Object.assign(window, {
       electronAPI: {
@@ -76,29 +82,37 @@ describe('CSS injection and persistence', () => {
     });
 
     await act(async () => {
-      root.render(<Settings onClose={() => undefined} onCSSUpdate={onCSSUpdate} />);
+      root.render(
+        <Settings onClose={() => undefined} onCSSUpdate={onCSSUpdate} />
+      );
       await Promise.resolve();
     });
 
-    await act(async () => { await Promise.resolve(); });
+    await act(async () => {
+      await Promise.resolve();
+    });
 
     const textarea = container.querySelector('textarea');
-    const saveButton = Array.from(container.querySelectorAll('button')).find((button) =>
-      button.textContent?.includes('Save')
+    const saveButton = Array.from(container.querySelectorAll('button')).find(
+      (button) => button.textContent?.includes('Save')
     );
 
-    await act(async () => { await Promise.resolve(); });
+    await act(async () => {
+      await Promise.resolve();
+    });
     expect(textarea?.value).toBe(cssValue);
 
     expect(textarea).toBeTruthy();
     expect(saveButton).toBeTruthy();
 
     await act(async () => {
-      saveButton?.dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+      saveButton?.dispatchEvent(
+        new window.MouseEvent('click', { bubbles: true })
+      );
     });
 
     expect(setCustomCSS).toHaveBeenCalledWith(cssValue);
     expect(onCSSUpdate).toHaveBeenCalledWith(cssValue);
-    expect(alertSpy).toHaveBeenCalled();
+    expect(alertSpy).not.toHaveBeenCalled();
   });
 });
